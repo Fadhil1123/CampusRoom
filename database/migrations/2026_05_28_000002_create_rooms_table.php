@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('user_id');
-            $table->string('nim_nip', 20)->unique();
-            $table->string('nama', 100);
-            $table->string('password', 100);
-            $table->enum('role', ['admin', 'user'])->default('user');
+        Schema::create('rooms', function (Blueprint $table) {
+            $table->increments('room_id');
+            $table->string('nama_ruangan', 100);
+            $table->integer('kapasitas');
+            $table->enum('status', ['tersedia', 'tidak tersedia'])->nullable()->default('tersedia');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('rooms');
     }
 };
