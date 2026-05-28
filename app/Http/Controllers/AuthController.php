@@ -15,18 +15,23 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $user = User::where('nim_nip', $request->nim_nip)
-                    ->where('password', $request->password)
-                    ->first();
+            ->where('password', $request->password)
+            ->first();
 
         if ($user) {
 
             session([
-                'user_id' => $user->user_id,
-                'nama' => $user->nama,
-                'role' => $user->role,
+                'user' => $user
             ]);
 
-            return redirect('/rooms');
+            if ($user->role == 'admin') {
+
+                return redirect('/rooms');
+
+            } else {
+
+                return redirect('/booking/perkuliahan');
+            }
         }
 
         return back()->with('error', 'Login gagal');
