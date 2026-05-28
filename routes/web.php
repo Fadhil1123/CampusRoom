@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\BookingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -87,3 +88,9 @@ Route::put('/schedules/update/{id}', [ScheduleController::class, 'update'])
 
 Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy'])
     ->middleware('admin');
+
+//route booking perkuliahan
+Route::get('/booking/perkuliahan', [BookingController::class, 'createPerkuliahan']);
+
+Route::post('/booking/perkuliahan/store', [BookingController::class, 'storePerkuliahan']);
+
