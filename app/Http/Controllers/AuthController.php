@@ -26,7 +26,7 @@ class AuthController extends Controller
                 'role' => $user->role,
             ]);
 
-            return redirect('/dashboard');
+            return redirect('/rooms');
         }
 
         return back()->with('error', 'Login gagal');
