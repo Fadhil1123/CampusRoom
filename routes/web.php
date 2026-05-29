@@ -110,3 +110,10 @@ Route::get('/admin/bookings/{id}/reject', [BookingController::class, 'rejectBook
 //route dashboard admin
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('admin');
+
+//route dashboard user
+Route::get('/my-bookings', [BookingController::class, 'myBookings']);
+
+//route admin lihat semua booking
+Route::get('/admin/all-bookings', [BookingController::class, 'allBookings'])
+    ->middleware('admin');

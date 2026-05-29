@@ -332,4 +332,44 @@ class BookingController extends Controller
 
         return "Booking berhasil ditolak!";
     }
+
+    // =====================================
+    // RIWAYAT BOOKING USER
+    // =====================================
+
+    public function myBookings()
+    {
+        $userId = session('user')->user_id;
+
+        $bookings = Booking::where('user_id', $userId)
+
+            ->with('rooms')
+
+            ->orderBy('booking_id', 'desc')
+
+            ->get();
+
+        return view('bookings.history', compact('bookings'));
+    }
+
+    // =====================================
+    // ALL BOOKINGS ADMIN
+    // =====================================
+
+    public function allBookings()
+    {
+    $bookings = Booking::with([
+            'rooms',
+            'user'
+        ])
+
+        ->orderBy('booking_id', 'desc')
+
+        ->get();
+
+    return view(
+        'admin.bookings.all',
+        compact('bookings')
+    );
+}
 }
