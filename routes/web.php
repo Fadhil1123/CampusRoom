@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -94,3 +95,18 @@ Route::get('/booking/perkuliahan', [BookingController::class, 'createPerkuliahan
 
 Route::post('/booking/perkuliahan/store', [BookingController::class, 'storePerkuliahan']);
 
+//route booking kegiatan
+Route::get('/booking/kegiatan', [BookingController::class, 'createKegiatan']);
+
+Route::post('/booking/kegiatan/store', [BookingController::class, 'storeKegiatan']);
+
+//admin route approve/reject booking
+Route::get('/admin/bookings', [BookingController::class, 'pendingBookings']);
+
+Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
+
+Route::get('/admin/bookings/{id}/reject', [BookingController::class, 'rejectBooking']);
+
+//route dashboard admin
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('admin');

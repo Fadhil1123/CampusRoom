@@ -10,9 +10,22 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!session('user') || session('user')->role != 'admin') {
+        // =========================
+        // CEK SUDAH LOGIN
+        // =========================
 
-            return response('403 | Akses ditolak', 403);
+        if (!session()->has('user')) {
+
+            return redirect('/login');
+        }
+
+        // =========================
+        // CEK ROLE ADMIN
+        // =========================
+
+        if (session('user')->role != 'admin') {
+
+            abort(403, 'Akses ditolak');
         }
 
         return $next($request);

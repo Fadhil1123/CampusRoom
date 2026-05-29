@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Booking Kegiatan</title>
+</head>
+
+<body>
+
+    <h1>Booking Kegiatan</h1>
+
+    <form action="/booking/kegiatan/store" method="POST" enctype="multipart/form-data">
+
+        @csrf
+
+        <div>
+
+            <label>Nama Kegiatan</label>
+
+            <br>
+
+            <input type="text" name="nama_kegiatan">
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Tanggal</label>
+
+            <br>
+
+            <input type="date" name="tanggal">
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Jam Mulai</label>
+
+            <br>
+
+            <input type="time" name="jam_mulai">
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Jam Selesai</label>
+
+            <br>
+
+            <input type="time" name="jam_selesai">
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Upload Surat</label>
+
+            <br>
+
+            <input type="file" name="surat">
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Pilih Ruangan</label>
+
+            <br><br>
+
+            @foreach($rooms as $room)
+
+                <input type="checkbox" name="room_id[]" value="{{ $room->room_id }}">
+
+                {{ $room->nama_ruangan }}
+
+                <br>
+
+            @endforeach
+
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Booking Kegiatan
+        </button>
+
+    </form>
+
+</body>
+
+</html>
