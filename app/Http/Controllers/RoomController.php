@@ -30,6 +30,13 @@ class RoomController extends Controller
             'status' => $request->status,
         ]);
 
+        $request->validate([
+
+        'nama_ruangan' => 'required',
+
+        'kapasitas' => 'required|integer',
+
+    ]);
         return redirect('/rooms');
     }
 
@@ -51,6 +58,14 @@ class RoomController extends Controller
             'kapasitas' => $request->kapasitas,
             'status' => $request->status,
         ]);
+
+        $request->validate([
+
+        'nama_ruangan' => 'required',
+
+        'kapasitas' => 'required|integer',
+
+    ]);
 
         return redirect('/rooms');
     }

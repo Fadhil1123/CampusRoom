@@ -36,6 +36,18 @@ class ScheduleController extends Controller
             'jam_selesai' => $request->jam_selesai,
         ]);
 
+        $request->validate([
+
+        'room_id' => 'required',
+
+        'hari' => 'required',
+
+        'jam_mulai' => 'required',
+
+        'jam_selesai' => 'required|after:jam_mulai',
+
+    ]);
+
         return redirect('/schedules');
     }
 
@@ -62,6 +74,18 @@ class ScheduleController extends Controller
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
         ]);
+
+        $request->validate([
+
+        'room_id' => 'required',
+
+        'hari' => 'required',
+
+        'jam_mulai' => 'required',
+
+        'jam_selesai' => 'required|after:jam_mulai',
+
+    ]);
 
         return redirect('/schedules');
     }

@@ -69,7 +69,10 @@ class BookingController extends Controller
 
         if ($bentrokSchedule) {
 
-            return "Ruangan sedang dipakai jadwal kuliah!";
+            return back()->with(
+                'error',
+                'Ruangan sedang dipakai jadwal kuliah!'
+            );
         }
 
         // =========================
@@ -103,7 +106,10 @@ class BookingController extends Controller
 
         if ($bentrokBooking) {
 
-            return "Ruangan sudah dibooking!";
+            return back()->with(
+                'error',
+                'Ruangan sudah dibooking!'
+            );
         }
 
         // =========================
@@ -146,7 +152,22 @@ class BookingController extends Controller
 
         ]);
 
-        return "Booking berhasil!";
+        $request->validate([
+
+            'room_id' => 'required',
+
+            'tanggal' => 'required|date',
+
+            'jam_mulai' => 'required',
+
+            'jam_selesai' => 'required|after:jam_mulai',
+
+        ]);
+
+        return back()->with(
+            'success',
+            'Booking berhasil!'
+        );
     }
 
     // =====================================
@@ -176,7 +197,10 @@ class BookingController extends Controller
 
         if ($tanggalBooking < $minimalTanggal) {
 
-            return "Booking kegiatan minimal H-2!";
+            return back()->with(
+                'error',
+                'Booking kegiatan minimal H-2!'
+            );
         }
 
         // =========================
@@ -185,7 +209,10 @@ class BookingController extends Controller
 
         if (!$request->hasFile('surat')) {
 
-            return "File surat wajib diupload!";
+            return back()->with(
+                'error',
+                'File surat wajib diupload!'
+            );
         }
 
         // =========================
@@ -284,6 +311,18 @@ class BookingController extends Controller
 
             ]);
         }
+
+        $request->validate([
+
+            'tanggal' => 'required|date',
+
+            'jam_mulai' => 'required',
+
+            'jam_selesai' => 'required|after:jam_mulai',
+
+            'surat' => 'required|file',
+
+        ]);
 
         return "Booking kegiatan berhasil!";
     }

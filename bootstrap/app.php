@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function ($middleware) {
     $middleware->alias([
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
+        'auth.custom' => \App\Http\Middleware\AuthMiddleware::class,
     ]);
     })
 
