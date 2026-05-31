@@ -9,11 +9,22 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTE
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-//test route relasi database
+/*
+|--------------------------------------------------------------------------
+| TEST ROUTE
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/test-room', function () {
 
     $rooms = Room::with('schedules')->get();
@@ -30,90 +41,118 @@ Route::get('/test-booking', function () {
 
 });
 
-//route auth
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/login', [AuthController::class, 'loginForm']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
-Route::get('/dashboard', function () {
+/*
+|--------------------------------------------------------------------------
+| USER ROUTE
+|--------------------------------------------------------------------------
+*/
 
-    if (!session()->has('user_id')) {
-        return redirect('/login');
-    }
+Route::middleware('auth.custom')->group(function () {
 
-    return 'LOGIN BERHASIL';
+    // dashboard user
+    Route::get('/my-bookings', [BookingController::class, 'myBookings']);
+
+    // booking perkuliahan
+    Route::get(
+        '/booking/perkuliahan',
+        [BookingController::class, 'createPerkuliahan']
+    );
+
+    Route::post(
+        '/booking/perkuliahan/store',
+        [BookingController::class, 'storePerkuliahan']
+    );
+
+    // booking kegiatan
+    Route::get(
+        '/booking/kegiatan',
+        [BookingController::class, 'createKegiatan']
+    );
+
+    Route::post(
+        '/booking/kegiatan/store',
+        [BookingController::class, 'storeKegiatan']
+    );
 
 });
 
-//test middleware admin
-Route::get('/admin', function () {
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTE
+|--------------------------------------------------------------------------
+*/
 
-    return 'HALAMAN ADMIN';
+Route::middleware('admin')->group(function () {
 
-})->middleware('admin');
+    // test admin
+    Route::get('/admin', function () {
 
-//route resource untuk room
-Route::get('/rooms', [RoomController::class, 'index'])
-    ->middleware('admin');
+        return 'HALAMAN ADMIN';
 
-Route::get('/rooms/create', [RoomController::class, 'create'])
-    ->middleware('admin');
+    });
 
-Route::post('/rooms/store', [RoomController::class, 'store'])
-    ->middleware('admin');
+    // dashboard admin
+    Route::get(
+        '/dashboard',
+        [DashboardController::class, 'index']
+    );
 
-Route::get('/rooms/edit/{id}', [RoomController::class, 'edit'])
-    ->middleware('admin');
+    // room
+    Route::get('/rooms', [RoomController::class, 'index']);
 
-Route::put('/rooms/update/{id}', [RoomController::class, 'update'])
-    ->middleware('admin');
+    Route::get('/rooms/create', [RoomController::class, 'create']);
 
-Route::get('/rooms/delete/{id}', [RoomController::class, 'destroy'])
-    ->middleware('admin');
+    Route::post('/rooms/store', [RoomController::class, 'store']);
 
-//route resource untuk schedule
-Route::get('/schedules', [ScheduleController::class, 'index'])
-    ->middleware('admin');
+    Route::get('/rooms/edit/{id}', [RoomController::class, 'edit']);
 
-Route::get('/schedules/create', [ScheduleController::class, 'create'])
-    ->middleware('admin');
+    Route::put('/rooms/update/{id}', [RoomController::class, 'update']);
 
-Route::post('/schedules/store', [ScheduleController::class, 'store'])
-    ->middleware('admin');
+    Route::get('/rooms/delete/{id}', [RoomController::class, 'destroy']);
 
-Route::get('/schedules/edit/{id}', [ScheduleController::class, 'edit'])
-    ->middleware('admin');
+    // schedule
+    Route::get('/schedules', [ScheduleController::class, 'index']);
 
-Route::put('/schedules/update/{id}', [ScheduleController::class, 'update'])
-    ->middleware('admin');
+    Route::get('/schedules/create', [ScheduleController::class, 'create']);
 
-Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy'])
-    ->middleware('admin');
+    Route::post('/schedules/store', [ScheduleController::class, 'store']);
 
-//route booking perkuliahan
-Route::get('/booking/perkuliahan', [BookingController::class, 'createPerkuliahan']);
+    Route::get('/schedules/edit/{id}', [ScheduleController::class, 'edit']);
 
-Route::post('/booking/perkuliahan/store', [BookingController::class, 'storePerkuliahan']);
+    Route::put('/schedules/update/{id}', [ScheduleController::class, 'update']);
 
-//route booking kegiatan
-Route::get('/booking/kegiatan', [BookingController::class, 'createKegiatan']);
+    Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy']);
 
-Route::post('/booking/kegiatan/store', [BookingController::class, 'storeKegiatan']);
+    // approval booking
+    Route::get(
+        '/admin/bookings',
+        [BookingController::class, 'pendingBookings']
+    );
 
-//admin route approve/reject booking
-Route::get('/admin/bookings', [BookingController::class, 'pendingBookings']);
+    Route::get(
+        '/admin/bookings/{id}/approve',
+        [BookingController::class, 'approveBooking']
+    );
 
-Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
+    Route::get(
+        '/admin/bookings/{id}/reject',
+        [BookingController::class, 'rejectBooking']
+    );
 
-Route::get('/admin/bookings/{id}/reject', [BookingController::class, 'rejectBooking']);
+    // semua booking
+    Route::get(
+        '/admin/all-bookings',
+        [BookingController::class, 'allBookings']
+    );
 
-//route dashboard admin
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware('admin');
-
-//route dashboard user
-Route::get('/my-bookings', [BookingController::class, 'myBookings']);
-
-//route admin lihat semua booking
-Route::get('/admin/all-bookings', [BookingController::class, 'allBookings'])
-    ->middleware('admin');
+});
