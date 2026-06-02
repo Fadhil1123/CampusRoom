@@ -99,6 +99,16 @@
 
         <br>
 
+        <h3>Template Surat Peminjaman</h3>
+
+        <a href="/download-template-surat">
+
+            Download Template Surat
+
+        </a>
+
+        <br><br>
+
         <div>
 
             <label>Upload Surat</label>

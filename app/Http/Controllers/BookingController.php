@@ -417,8 +417,17 @@ class BookingController extends Controller
         ->get();
 
     return view(
-        'admin.bookings.all',
-        compact('bookings')
-    );
-}
+            'admin.bookings.all',
+            compact('bookings')
+        );
+    }
+
+    public function downloadTemplate()
+    {
+        $path = public_path(
+            'template/template_surat_peminjaman.docx'
+        );
+
+        return response()->download($path);
+    }
 }
