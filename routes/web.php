@@ -177,4 +177,10 @@ Route::middleware('admin')->group(function () {
         [KegiatanController::class, 'destroy']
     )->middleware('admin');
 
+    // download template surat
+    Route::get(
+        '/download-template-surat',
+        [BookingController::class, 'downloadTemplate']
+    );
+
 });
