@@ -37,6 +37,30 @@
 
         </div>
 
+        <div>
+
+            <label>Deskripsi Kegiatan</label>
+
+            <br>
+
+            <textarea name="deskripsi"></textarea>
+
+        </div>
+
+        <br>
+
+        <div>
+
+            <label>Penyelenggara</label>
+
+            <br>
+
+            <input type="text" name="penyelenggara">
+
+        </div>
+
+        <br>
+
         <br>
 
         <div>
@@ -115,11 +139,11 @@
 
     @if(session('success'))
 
-    <p style="color:green">
+        <p style="color:green">
 
-        {{ session('success') }}
+            {{ session('success') }}
 
-    </p>
+        </p>
 
     @endif
 

@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Models\BookingRoom;
 use App\Models\Schedule;
+use App\Models\Kegiatan;
 
 class BookingController extends Controller
 {
@@ -268,6 +269,15 @@ class BookingController extends Controller
         // =========================
 
         $pathSurat = $request->file('surat')->store('surat', 'public');
+        $kegiatan = Kegiatan::create([
+
+            'nama_kegiatan' => $request->nama_kegiatan,
+
+            'deskripsi' => $request->deskripsi,
+
+            'penyelenggara' => $request->penyelenggara,
+
+        ]);
 
         // =========================
         // SIMPAN BOOKING
