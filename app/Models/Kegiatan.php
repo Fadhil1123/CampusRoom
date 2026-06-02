@@ -21,6 +21,9 @@ class Kegiatan extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'kegiatan_id');
+        return $this->hasMany(
+            Booking::class,
+            'kegiatan_id'
+        );
     }
 }

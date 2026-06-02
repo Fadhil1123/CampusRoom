@@ -8,6 +8,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KegiatanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,5 +155,26 @@ Route::middleware('admin')->group(function () {
         '/admin/all-bookings',
         [BookingController::class, 'allBookings']
     );
+
+    // kegiatan
+    Route::get(
+        '/admin/kegiatan',
+        [KegiatanController::class, 'index']
+    )->middleware('admin');
+
+    Route::get(
+        '/admin/kegiatan/edit/{id}',
+        [KegiatanController::class, 'edit']
+    )->middleware('admin');
+
+    Route::put(
+        '/admin/kegiatan/update/{id}',
+        [KegiatanController::class, 'update']
+    )->middleware('admin');
+
+    Route::get(
+        '/admin/kegiatan/delete/{id}',
+        [KegiatanController::class, 'destroy']
+    )->middleware('admin');
 
 });
