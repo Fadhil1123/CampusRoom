@@ -87,19 +87,29 @@ class BookingController extends Controller
             'booking_rooms.booking_id'
         )
 
-            ->where('booking_rooms.room_id', $request->room_id)
+        ->where('booking_rooms.room_id', $request->room_id)
 
-            ->whereDate('tanggal', $request->tanggal)
+        ->whereDate('tanggal', $request->tanggal)
 
-            ->where(function ($query) use ($request) {
+        ->where('status', 'approved')
 
-                $query->where('jam_mulai', '<', $request->jam_selesai)
+        ->where(function ($query) use ($request) {
 
-                    ->where('jam_selesai', '>', $request->jam_mulai);
+            $query->where(
+                'jam_mulai',
+                '<',
+                $request->jam_selesai
+            )
 
-            })
+            ->where(
+                'jam_selesai',
+                '>',
+                $request->jam_mulai
+            );
 
-            ->exists();
+        })
+
+        ->exists();
 
         // =========================
         // JIKA BENTROK BOOKING
@@ -239,8 +249,9 @@ class BookingController extends Controller
             )
 
                 ->where('booking_rooms.room_id', $roomId)
+                ->where('bookings.status', 'approved')
 
-                ->whereDate('tanggal', $request->tanggal)
+                ->whereDate('tanggal', $request->tanggal) 
 
                 ->where(function ($query) use ($request) {
 
@@ -287,7 +298,7 @@ class BookingController extends Controller
 
             'user_id' => session('user')->user_id,
 
-            'kegiatan_id' => null,
+            'kegiatan_id' => $kegiatan->kegiatan_id,
 
             'tanggal' => $request->tanggal,
 
@@ -356,6 +367,58 @@ class BookingController extends Controller
     {
         $booking = Booking::find($id);
 
+        $rooms = $booking->rooms;
+
+        foreach ($rooms as $room) {
+
+            $bentrok = Booking::join(
+                'booking_rooms',
+                'bookings.booking_id',
+                '=',
+                'booking_rooms.booking_id'
+            )
+
+            ->where('booking_rooms.room_id', $room->room_id)
+
+            ->where('bookings.status', 'approved')
+
+            ->whereDate(
+                'bookings.tanggal',
+                $booking->tanggal
+            )
+
+            ->where(
+                'bookings.booking_id',
+                '!=',
+                $booking->booking_id
+            )
+
+            ->where(function ($query) use ($booking) {
+
+                $query->where(
+                    'bookings.jam_mulai',
+                    '<',
+                    $booking->jam_selesai
+                )
+
+                ->where(
+                    'bookings.jam_selesai',
+                    '>',
+                    $booking->jam_mulai
+                );
+            })
+
+            ->exists();
+
+            if ($bentrok) {
+
+                return back()->with(
+                    'error',
+                    'Ruangan '.$room->nama_ruangan.' sudah dipakai booking lain yang telah disetujui.'
+                );
+            }
+        }
+
         $booking->status = 'approved';
 
         $booking->approved_by = session('user')->user_id;
@@ -364,7 +427,10 @@ class BookingController extends Controller
 
         $booking->save();
 
-        return "Booking berhasil diapprove!";
+        return back()->with(
+            'success',
+            'Booking berhasil diapprove.'
+        );
     }
 
     // =====================================
