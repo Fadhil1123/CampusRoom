@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\Booking;
 use App\Models\User;
+use App\Models\Kegiatan;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalRoom = Room::count();
+
+        $totalUser = User::count();
 
         $totalBooking = Booking::count();
 
@@ -24,16 +26,38 @@ class DashboardController extends Controller
             'approved'
         )->count();
 
-        $totalUser = User::count();
+        $rejectedBooking = Booking::where(
+            'status',
+            'rejected'
+        )->count();
 
-        return view('dashboard.index', compact(
+        $totalRoom = Room::count();
 
-            'totalRoom',
-            'totalBooking',
-            'pendingBooking',
-            'approvedBooking',
-            'totalUser'
+        $totalKegiatan = Kegiatan::count();
 
-        ));
+        $totalPerkuliahan = Booking::where(
+            'jenis',
+            'perkuliahan'
+        )->count();
+
+        $totalBookingKegiatan = Booking::where(
+            'jenis',
+            'kegiatan'
+        )->count();
+
+        return view(
+            'dashboard.index',
+            compact(
+                'totalUser',
+                'totalBooking',
+                'pendingBooking',
+                'approvedBooking',
+                'rejectedBooking',
+                'totalRoom',
+                'totalKegiatan',
+                'totalPerkuliahan',
+                'totalBookingKegiatan'
+            )
+        );
     }
 }
