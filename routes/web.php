@@ -17,7 +17,7 @@ use App\Http\Controllers\KegiatanController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 /*

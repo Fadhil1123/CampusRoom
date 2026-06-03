@@ -6,6 +6,16 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Font Sesuai Design Spec */
+    --font-space: 'Space Grotesk', sans-serif;
+    --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+    --font-dm: 'DM Sans', sans-serif;
+
+    /* Shadow Custom Sesuai Spec */
+    --shadow-glow: 0 4px 24px rgba(244, 180, 0, 0.25);
+    
+    /* Colors Sesuai Spec */
+    --color-primary: #F4B400;
+    --color-secondary: #4FC3F7;
+    --color-bg: #F8FAFF;
 }
