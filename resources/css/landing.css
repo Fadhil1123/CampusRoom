@@ -1,0 +1,31 @@
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+}
+
+.floating-card {
+    animation: float 4s ease-in-out infinite;
+    backdrop-filter: blur(10px);
+}
+
+.shadow-glow {
+    box-shadow: 0 4px 24px rgba(244,180,0,0.25);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    border: 1px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, #F4B400, #4FC3F7);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
