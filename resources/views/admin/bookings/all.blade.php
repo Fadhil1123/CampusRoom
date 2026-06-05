@@ -1,104 +1,129 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>All Bookings</title>
 </head>
+
 <body>
 
-<h1>Semua Booking</h1>
+    <h1>Semua Booking</h1>
 
-<table border="1" cellpadding="10">
+    <table border="1" cellpadding="10">
 
-    <tr>
+        <tr>
 
-        <th>ID</th>
+            <th>ID</th>
+            <th>User</th>
+            <th>Tanggal</th>
+            <th>Jam</th>
+            <th>Jenis</th>
+            <th>Status</th>
+            <th>Ruangan</th>
+            <th>Diproses Oleh</th>
+            <th>Diproses Pada</th>
+            <th>Surat</th>
 
-        <th>User</th>
+        </tr>
 
-        <th>Tanggal</th>
+        @foreach($bookings as $booking)
 
-        <th>Jam</th>
+            <tr>
 
-        <th>Jenis</th>
+                <td>
+                    {{ $booking->booking_id }}
+                </td>
 
-        <th>Status</th>
+                <td>
+                    {{ $booking->user->nama }}
+                </td>
 
-        <th>Ruangan</th>
+                <td>
+                    {{ $booking->tanggal }}
+                </td>
 
-        <th>Surat</th>
+                <td>
 
-    </tr>
+                    {{ $booking->jam_mulai }}
 
-    @foreach($bookings as $booking)
+                    -
 
-    <tr>
+                    {{ $booking->jam_selesai }}
 
-        <td>
-            {{ $booking->booking_id }}
-        </td>
+                </td>
 
-        <td>
-            {{ $booking->user->nama }}
-        </td>
+                <td>
+                    {{ $booking->jenis }}
+                </td>
 
-        <td>
-            {{ $booking->tanggal }}
-        </td>
+                <td>
+                    {{ $booking->status }}
+                </td>
 
-        <td>
+                <td>
 
-            {{ $booking->jam_mulai }}
+                    @foreach($booking->rooms as $room)
 
-            -
+                        {{ $room->nama_ruangan }}
 
-            {{ $booking->jam_selesai }}
+                        <br>
 
-        </td>
+                    @endforeach
 
-        <td>
-            {{ $booking->jenis }}
-        </td>
+                </td>
 
-        <td>
-            {{ $booking->status }}
-        </td>
+                <td>
 
-        <td>
+                    @if($booking->approver)
 
-            @foreach($booking->rooms as $room)
+                        {{ $booking->approver->nama }}
 
-                {{ $room->nama_ruangan }}
+                    @else
 
-                <br>
+                        -
 
-            @endforeach
+                    @endif
 
-        </td>
+                </td>
 
-        <td>
+                <td>
 
-            @if($booking->surat)
+                    @if($booking->approved_at)
 
-                <a href="{{ asset('storage/' . $booking->surat) }}"
-                target="_blank">
+                        {{ $booking->approved_at->format('d-m-Y H:i') }}
 
-                    Lihat Surat
+                    @else
 
-                </a>
+                        -
 
-            @else
+                    @endif
 
-                -
+                </td>
 
-            @endif
+                <td>
 
-        </td>
+                    @if($booking->surat)
 
-    </tr>
+                        <a href="{{ asset('storage/' . $booking->surat) }}" target="_blank">
 
-    @endforeach
+                            Lihat Surat
 
-</table>
+                        </a>
+
+                    @else
+
+                        -
+
+                    @endif
+
+                </td>
+
+            </tr>
+
+        @endforeach
+
+    </table>
 
 </body>
+
 </html>
