@@ -443,9 +443,18 @@ class BookingController extends Controller
 
         $booking->status = 'rejected';
 
+        $booking->approved_by =
+            session('user')->user_id;
+
+        $booking->approved_at =
+            now();
+
         $booking->save();
 
-        return "Booking berhasil ditolak!";
+        return back()->with(
+            'success',
+            'Booking berhasil ditolak.'
+        );
     }
 
     // =====================================
@@ -475,7 +484,8 @@ class BookingController extends Controller
     {
     $bookings = Booking::with([
             'rooms',
-            'user'
+            'user',
+            'approver'
         ])
 
         ->orderBy('booking_id', 'desc')

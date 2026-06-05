@@ -43,4 +43,17 @@ class Booking extends Model
             'room_id'
         );
     }
+
+        public function approver()
+    {
+        return $this->belongsTo(
+            User::class,
+            'approved_by',
+            'user_id'
+        );
+    }
+
+    protected $casts = [
+        'approved_at' => 'datetime',
+    ];
 }
