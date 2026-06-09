@@ -26,11 +26,11 @@ class AuthController extends Controller
 
             if ($user->role == 'admin') {
 
-                return redirect('/rooms');
+                return redirect('/admin/dashboard');
 
             } else {
 
-                return redirect('/booking/perkuliahan');
+                return redirect('/dashboard');
             }
         }
 

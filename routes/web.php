@@ -63,6 +63,10 @@ Route::middleware('auth.custom')->group(function () {
     // dashboard user
     Route::get('/my-bookings', [BookingController::class, 'myBookings']);
 
+    // User dashboard
+    Route::get('/dashboard', [DashboardController::class, 'userDashboard'])
+        ->middleware('auth.custom');
+
     // booking perkuliahan
     Route::get(
         '/booking/perkuliahan',
@@ -103,10 +107,8 @@ Route::middleware('admin')->group(function () {
     });
 
     // dashboard admin
-    Route::get(
-        '/dashboard',
-        [DashboardController::class, 'index']
-    );
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])
+        ->middleware('admin');
 
     // room
     Route::get('/rooms', [RoomController::class, 'index']);
