@@ -1,0 +1,591 @@
+/* ============================================================
+   CampusRoom — Login Page Styles
+   File: resources/css/login.css
+   ============================================================ */
+
+/* ============================================================
+   PAGE LAYOUT: full screen split
+   ============================================================ */
+.lg-page {
+    min-height: 100vh;
+    display: flex;
+    background: #F0F4FF;
+}
+
+/* ============================================================
+   LEFT PANEL
+   ============================================================ */
+.lg-left {
+    flex: 0 0 45%;
+    max-width: 45%;
+    background: linear-gradient(
+        135deg,
+        #FCF8EC 0%,
+        #F6F2E4 35%,
+        #E9F4F8 70%,
+        #DDEEF5 100%
+    );
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 52px 52px;
+    gap: 28px;
+}
+
+/* Ambient blobs */
+.lg-left__blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+.lg-left__blob--1 {
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.10);
+    top: -80px;
+    right: -80px;
+    filter: blur(40px);
+}
+.lg-left__blob--2 {
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.08);
+    bottom: 60px;
+    left: -60px;
+    filter: blur(30px);
+}
+
+/* Logo */
+.lg-left__logo {
+    position: relative;
+    z-index: 2;
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+.lg-logo-campus { 
+    color: var(--cr-yellow); 
+    font-family: var(--cr-font-display); 
+    font-weight: 700; }
+.lg-logo-room   { 
+    color: var(--cr-dark);   
+    font-family: var(--cr-font-display); 
+    font-weight: 700; }
+
+/* Headline */
+.lg-left__headline {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+.lg-left__headline h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--cr-dark);
+    letter-spacing: -0.5px;
+}
+.lg-headline-accent {
+    color: #F4B400;
+    font-weight: 800;
+}
+
+/* Floating cards container */
+.lg-left__cards {
+    position: relative;
+    z-index: 2;
+    height: 280px;
+    width: 420px;
+    flex-shrink: 0;
+}
+
+/* Base float card */
+.lg-float-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    animation: lgFloat 3.5s ease-in-out infinite;
+}
+@keyframes lgFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+
+/* Calendar card */
+.lg-float-card--cal {
+    top: 25px;
+    left:40px;
+    padding: 12px 14px;
+    width: 200px;
+    animation-delay: 0s;
+}
+
+.lg-cal-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: #00C896;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(0, 200, 150, 0.10);
+    border: 1px solid rgba(0, 200, 150, 0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.lg-cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.lg-cal-header span {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #1A2340;
+}
+.lg-cal-nav {
+    display: flex;
+    gap: 2px;
+}
+.lg-cal-nav button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #5A6A8A;
+    padding: 1px 4px;
+    border-radius: 3px;
+    line-height: 1;
+}
+.lg-cal-nav button:hover { background: #E8EEF7; }
+
+.lg-cal-days-hdr {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 4px;
+}
+.lg-cal-days-hdr span {
+    text-align: center;
+    font-size: 0.55rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    color: #9AAFC8;
+}
+
+.lg-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+}
+.lg-cal-grid span {
+    text-align: center;
+    font-size: 0.6rem;
+    font-family: 'DM Sans', sans-serif;
+    color: #5A6A8A;
+    padding: 3px 1px;
+    border-radius: 3px;
+}
+.lg-cal-grid .lg-cal-active {
+    background: #4FC3F7;
+    color: #fff;
+    font-weight: 700;
+}
+.lg-cal-grid .lg-cal-today {
+    background: #1A2340;
+    color: #fff;
+    font-weight: 700;
+}
+.lg-cal-grid .lg-cal-e { visibility: hidden; }
+
+/* Approved card */
+.lg-float-card--approved {
+    top: 55px;
+    left: 240px;
+    right: auto;
+    padding: 20px 24px;
+    text-align: center;
+    min-width: 130px;
+    animation-delay: 0.6s;
+}
+.lg-approved-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #00C896;
+    color: #fff;
+    font-size: 1.375rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+}
+.lg-approved-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.688rem;
+    font-weight: 800;
+    color: #00C896;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Available room card */
+.lg-float-card--avail {
+    bottom: 20px;
+    left: 90px;
+    padding: 12px 16px;
+    min-width: 185px;
+    animation-delay: 1.1s;
+}
+.lg-avail-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.688rem;
+    color: #5A6A8A;
+    margin-bottom: 5px;
+}
+.lg-avail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.lg-avail-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #1A2340;
+}
+.lg-avail-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.625rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #D1FAF0;
+    color: #00C896;
+}
+
+/* ============================================================
+   RIGHT PANEL
+   ============================================================ */
+.lg-right {
+    flex: 1;
+    background: #F6F8FC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative circles kanan */
+.lg-right__deco {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+.lg-right__deco--1 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(244,180,0,0.18) 0%, transparent 70%);
+    top: -40px;
+    right: -60px;
+}
+.lg-right__deco--2 {
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(79,195,247,0.15) 0%, transparent 70%);
+    bottom: 40px;
+    right: 20px;
+}
+
+/* Form card container */
+.lg-form-wrap {
+    background: #FFFFFF;
+    border-radius: 30px;
+    padding: 44px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow:
+        0 10px 40px rgba(26,35,64,0.08),
+        0 2px 10px rgba(26,35,64,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Brand pill */
+.lg-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #F8FAFF;
+    border: 1px solid #E8EEF7;
+    border-radius: 999px;
+    width: fit-content;
+    box-shadow: 0 1px 4px rgba(26,35,64,0.06);
+}
+.lg-brand-pill__icon { font-size: 0.875rem; }
+.lg-brand-pill__text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #1A2340;
+}
+
+/* Heading */
+.lg-form-heading h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 800;
+    color: #1A2340;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+}
+.lg-form-heading p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: #5A6A8A;
+    line-height: 1.5;
+    text-align: center;
+}
+.lg-sub-note {
+    color: #9AAFC8;
+    font-size: 0.813rem;
+}
+
+/* Error alert */
+.lg-alert-error {
+    padding: 12px 16px;
+    background: #FFF0F3;
+    border: 1px solid #FFD0D8;
+    border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #FF4D6D;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Form */
+.lg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Field */
+.lg-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.lg-field__label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1A2340;
+}
+
+.lg-field__input-wrap {
+    position: relative;
+}
+.lg-field__input-wrap--icon { }
+
+/* Input */
+.lg-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #E8EEF7;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.938rem;
+    color: #1A2340;
+    background: #FAFBFF;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.lg-input:focus {
+    border-color: #F4B400;
+    box-shadow: 0 0 0 3px rgba(244, 180, 0, 0.12);
+    background: #fff;
+}
+.lg-input--has-icon {
+    padding-right: 48px;
+}
+
+/* Eye toggle */
+.lg-eye-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9AAFC8;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s ease;
+}
+.lg-eye-btn:hover { color: #5A6A8A; }
+
+/* Remember + forgot row */
+.lg-row-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lg-remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: #5A6A8A;
+}
+
+.lg-checkbox {
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid #E8EEF7;
+    border-radius: 5px;
+    cursor: pointer;
+    accent-color: #F4B400;
+}
+
+.lg-forgot {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #F4B400;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.lg-forgot:hover { color: #c08800; }
+
+/* Submit button */
+.lg-submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #F4B400 0%, #FFB020 100%);
+    color: #1A2340;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 0.938rem;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px rgba(244, 180, 0, 0.35);
+    margin-top: 4px;
+}
+.lg-submit-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 28px rgba(244, 180, 0, 0.45);
+}
+.lg-submit-btn:active {
+    transform: scale(0.99);
+}
+
+/* Register link */
+.lg-register-text {
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: #5A6A8A;
+}
+.lg-register-link {
+    color: #4FC3F7;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: color 0.15s ease;
+}
+.lg-register-link:hover { color: #0277BD; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .lg-left { flex: 0 0 42%; max-width: 42%; padding: 36px 36px 40px; }
+    .lg-form-wrap { padding: 36px 32px; }
+}
+
+@media (max-width: 768px) {
+    .lg-page { flex-direction: column; min-height: 100vh; }
+
+    .lg-left {
+    flex: 0 0 45%;
+    max-width: 45%;
+    background: linear-gradient(
+        145deg,
+        #FFF8DE 0%,
+        #FDEEBB 25%,
+        #DDF2F8 70%,
+        #C8EBF5 100%
+    );
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 52px 52px;
+    gap: 28px;
+}
+
+    .lg-left__cards {
+        position: absolute;
+        bottom: -20px;
+        left: 20px;
+        right: 20px;
+        height: 180px;
+    }
+
+    .lg-right {
+        padding: 32px 20px 40px;
+        background: #EEF3FC;
+    }
+
+    .lg-form-wrap {
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lg-form-heading h2 { font-size: 1.6rem; }
+    .lg-form-wrap { padding: 28px 20px; gap: 18px; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .lg-float-card { animation: none; }
+    * { transition-duration: 0.01ms !important; }
+}
