@@ -1,20 +1,11 @@
-/* ============================================================
-   CampusRoom — Login Page Styles
-   File: resources/css/login.css
-   ============================================================ */
-
-/* ============================================================
-   PAGE LAYOUT: full screen split
-   ============================================================ */
+/* page layout : full screen split */
 .lg-page {
     min-height: 100vh;
     display: flex;
     background: #F0F4FF;
 }
 
-/* ============================================================
-   LEFT PANEL
-   ============================================================ */
+/*left panel */
 .lg-left {
     flex: 0 0 45%;
     max-width: 45%;
@@ -60,7 +51,7 @@
 .lg-left__logo {
     position: relative;
     z-index: 2;
-    font-size: 2.25rem;
+    font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: -0.5px;
     line-height: 1;
@@ -277,9 +268,7 @@
     color: #00C896;
 }
 
-/* ============================================================
-   RIGHT PANEL
-   ============================================================ */
+/* Right panel */
 .lg-right {
     flex: 1;
     background: #F6F8FC;
@@ -529,9 +518,7 @@
 }
 .lg-register-link:hover { color: #0277BD; }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/*responsive */
 @media (max-width: 1024px) {
     .lg-left { flex: 0 0 42%; max-width: 42%; padding: 36px 36px 40px; }
     .lg-form-wrap { padding: 36px 32px; }
@@ -582,9 +569,7 @@
     .lg-form-wrap { padding: 28px 20px; gap: 18px; }
 }
 
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
+/*reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
     .lg-float-card { animation: none; }
     * { transition-duration: 0.01ms !important; }

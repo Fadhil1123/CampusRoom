@@ -1,0 +1,699 @@
+/* ============================================================
+   CampusRoom — Dashboard Styles
+   File: resources/css/dashboard.css
+   ============================================================ */
+
+/* ============================================================
+   PAGE LAYOUT
+   ============================================================ */
+.cr-dashboard-body {
+    margin: 0;
+    padding: 0;
+    background: #F0F4FF;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+}
+
+.cr-dash-wrap {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.cr-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: linear-gradient(
+        145deg,
+        #FFF8DE 0%,
+        #FDEEBB 25%,
+        #DDF2F8 70%,
+        #C8EBF5 100%
+    );
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px 24px;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+/* Same ambient blobs as login left panel */
+.cr-sidebar::before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    top: -60px;
+    right: -60px;
+    filter: blur(30px);
+    pointer-events: none;
+}
+.cr-sidebar::after {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    bottom: 40px;
+    left: -50px;
+    filter: blur(25px);
+    pointer-events: none;
+}
+
+/* Logo */
+.cr-sidebar__logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+}
+.cr-sidebar__version {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    color: #9AAFC8;
+    margin-left: 6px;
+    font-weight: 400;
+}
+
+/* Profile */
+.cr-sidebar__profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+}
+.cr-sidebar__avatar-wrap {
+    flex-shrink: 0;
+}
+.cr-sidebar__avatar-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid rgba(244, 180, 0, 0.5);
+}
+.cr-sidebar__avatar-initials {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #F4B400 0%, #FFD54F 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #1A2340;
+    border: 2.5px solid rgba(255, 255, 255, 0.6);
+}
+.cr-sidebar__profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+.cr-sidebar__name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1A2340;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cr-sidebar__role {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #5A6A8A;
+    margin: 0;
+}
+.cr-sidebar__nim {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.688rem;
+    color: #9AAFC8;
+    margin: 0;
+}
+
+/* Notifikasi strip */
+.cr-sidebar__notif {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.cr-sidebar__notif:hover {
+    background: rgba(255, 255, 255, 0.75);
+}
+.cr-sidebar__notif-icon {
+    font-size: 0.875rem;
+}
+.cr-sidebar__notif-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1A2340;
+    flex: 1;
+}
+.cr-sidebar__notif-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #1A2340;
+}
+.cr-sidebar__notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FF4D6D;
+    flex-shrink: 0;
+}
+
+.cr-sidebar__divider {
+    height: 1px;
+    background: rgba(26, 35, 64, 0.08);
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Nav */
+.cr-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    z-index: 2;
+}
+.cr-sidebar__nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.838rem;
+    font-weight: 500;
+    color: #5A6A8A;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.cr-sidebar__nav-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #1A2340;
+}
+.cr-sidebar__nav-item--active {
+    background: rgba(255, 255, 255, 0.65);
+    color: #1A2340;
+    font-weight: 700;
+    border: 1px solid rgba(244, 180, 0, 0.25);
+}
+.cr-nav-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.cr-nav-label {
+    line-height: 1;
+}
+
+.cr-sidebar__spacer {
+    flex: 1;
+}
+
+/* Logout */
+.cr-sidebar__logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.838rem;
+    font-weight: 600;
+    color: #FF4D6D;
+    transition: background 0.15s ease;
+    position: relative;
+    z-index: 2;
+}
+.cr-sidebar__logout:hover {
+    background: rgba(255, 77, 109, 0.08);
+}
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+.cr-dash-main {
+    flex: 1;
+    background: #F0F4FF;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+.cr-dash-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 36px 48px;
+    position: relative;
+}
+
+/* Brand pill top right */
+.cr-dash-brand-pill {
+    position: absolute;
+    top: 28px;
+    right: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #E8EEF7;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(26, 35, 64, 0.07);
+}
+.cr-dash-brand-pill__icon {
+    font-size: 0.875rem;
+}
+.cr-dash-brand-pill__text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #1A2340;
+}
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+.cr-dash-section {
+    margin-bottom: 32px;
+}
+.cr-dash-section:first-child {
+    margin-top: 56px; /* space below brand pill */
+}
+.cr-dash-section__title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.063rem;
+    font-weight: 800;
+    color: #1A2340;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.2px;
+}
+
+/* ============================================================
+   STAT CARDS
+   ============================================================ */
+.cr-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.cr-stat-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(26, 35, 64, 0.06);
+    border: 1.5px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cr-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 35, 64, 0.10);
+}
+
+.cr-stat-card__icon {
+    font-size: 1.5rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.cr-stat-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.cr-stat-card__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #5A6A8A;
+    margin: 0;
+    font-weight: 400;
+}
+.cr-stat-card__num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #1A2340;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Variant colors */
+.cr-stat-card--aktif {
+    border-color: rgba(79, 195, 247, 0.2);
+}
+.cr-stat-card--aktif .cr-stat-card__icon {
+    background: rgba(79, 195, 247, 0.12);
+}
+
+.cr-stat-card--approved {
+    border-color: rgba(0, 200, 150, 0.2);
+}
+.cr-stat-card--approved .cr-stat-card__icon {
+    background: rgba(0, 200, 150, 0.12);
+}
+
+.cr-stat-card--pending {
+    border-color: rgba(244, 180, 0, 0.2);
+}
+.cr-stat-card--pending .cr-stat-card__icon {
+    background: rgba(244, 180, 0, 0.12);
+}
+
+.cr-stat-card--rejected {
+    border-color: rgba(255, 77, 109, 0.2);
+}
+.cr-stat-card--rejected .cr-stat-card__icon {
+    background: rgba(255, 77, 109, 0.12);
+}
+
+/* ============================================================
+   JADWAL MENDATANG
+   ============================================================ */
+.cr-jadwal-list {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26, 35, 64, 0.06);
+}
+
+.cr-jadwal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #F0F4FF;
+    transition: background 0.15s ease;
+}
+.cr-jadwal-item:last-child {
+    border-bottom: none;
+}
+.cr-jadwal-item:hover {
+    background: rgba(244, 180, 0, 0.03);
+}
+
+/* Timeline dot */
+.cr-jadwal-item__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+}
+.cr-jadwal-item__dot--approved {
+    background: #00C896;
+    border-color: rgba(0, 200, 150, 0.3);
+    box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.12);
+}
+.cr-jadwal-item__dot--pending {
+    background: #fff;
+    border-color: #9AAFC8;
+}
+
+.cr-jadwal-item__icon {
+    font-size: 1rem;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(79, 195, 247, 0.1);
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.cr-jadwal-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+.cr-jadwal-item__room {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1A2340;
+}
+.cr-jadwal-item__type {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #5A6A8A;
+}
+
+.cr-jadwal-item__time {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.813rem;
+    color: #5A6A8A;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cr-jadwal-item__status {
+    flex-shrink: 0;
+}
+
+/* Badges */
+.cr-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.cr-badge--approved {
+    background: #D1FAF0;
+    color: #00C896;
+}
+.cr-badge--pending {
+    background: #FFF3CD;
+    color: #E6820A;
+}
+.cr-badge--rejected {
+    background: #FFE4E9;
+    color: #FF4D6D;
+}
+
+/* Empty jadwal */
+.cr-jadwal-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 8px;
+    color: #9AAFC8;
+}
+.cr-jadwal-empty span {
+    font-size: 2rem;
+}
+.cr-jadwal-empty p {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #9AAFC8;
+    margin: 0;
+}
+.cr-btn-booking-empty {
+    margin-top: 8px;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #F4B400 0%, #FFB020 100%);
+    color: #1A2340;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.813rem;
+    font-weight: 700;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+}
+.cr-btn-booking-empty:hover {
+    transform: scale(1.03);
+}
+
+/* ============================================================
+   REKOMENDASI RUANGAN
+   ============================================================ */
+.cr-room-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.cr-room-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26, 35, 64, 0.06);
+    display: flex;
+    gap: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cr-room-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 35, 64, 0.10);
+}
+
+.cr-room-card__img {
+    width: 90px;
+    flex-shrink: 0;
+    background: #E8F4F8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.cr-room-card__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+.cr-room-card__img-placeholder svg {
+    width: 100%;
+    height: auto;
+}
+
+.cr-room-card__body {
+    flex: 1;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+}
+.cr-room-card__name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1A2340;
+    margin: 0;
+}
+.cr-room-card__meta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #9AAFC8;
+    margin: 0;
+}
+.cr-room-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    padding: 7px 16px;
+    background: linear-gradient(135deg, #F4B400 0%, #FFB020 100%);
+    color: #1A2340;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    width: fit-content;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 2px 8px rgba(244, 180, 0, 0.25);
+}
+.cr-room-card__btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(244, 180, 0, 0.35);
+}
+
+.cr-rooms-empty {
+    grid-column: span 2;
+    text-align: center;
+    padding: 40px;
+    color: #9AAFC8;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .cr-dash-content {
+        padding: 28px 24px 40px;
+    }
+    .cr-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cr-sidebar {
+        display: none;
+    }
+    .cr-dash-main {
+        width: 100%;
+    }
+    .cr-dash-content {
+        padding: 20px 16px 80px;
+    }
+    .cr-dash-brand-pill {
+        display: none;
+    }
+    .cr-dash-section:first-child {
+        margin-top: 16px;
+    }
+    .cr-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .cr-room-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .cr-stat-card,
+    .cr-room-card,
+    .cr-room-card__btn,
+    .cr-sidebar__nav-item {
+        transition: none;
+    }
+}
