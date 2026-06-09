@@ -148,11 +148,6 @@
                 </button>
             </form>
 
-            {{-- Register link --}}
-            <p class="lg-register-text">
-                Belum punya akun? <a href="#" class="lg-register-link">Daftar Sekarang</a>
-            </p>
-
         </div>
     </div>
 
