@@ -93,7 +93,7 @@
             <div class="cr-jadwal-empty">
                 <span>📋</span>
                 <p>Belum ada jadwal mendatang</p>
-                <a href="/booking/perkuliahan" class="cr-btn-booking-empty">Booking Sekarang</a>
+                <a href="/booking" class="cr-btn-booking-empty">Booking Sekarang</a>
             </div>
             @endforelse
         </div>
@@ -128,7 +128,7 @@
                 <div class="cr-room-card__body">
                     <p class="cr-room-card__name">{{ $room->nama_ruangan }}</p>
                     <p class="cr-room-card__meta">{{ $room->kapasitas }} Capacity &nbsp; AMS</p>
-                    <a href="/booking/perkuliahan?room={{ $room->room_id }}" class="cr-room-card__btn">
+                    <a href="/booking?room={{ $room->room_id }}" class="cr-room-card__btn">
                         Booking
                     </a>
                 </div>

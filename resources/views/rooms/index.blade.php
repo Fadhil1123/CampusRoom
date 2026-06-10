@@ -95,7 +95,7 @@
                 @if($isAvail)
                     {{-- stop propagation supaya klik Booking tidak trigger link card --}}
                     <span class="cr-rl-card__btn"
-                          onclick="event.preventDefault();window.location='/booking/perkuliahan?room_id={{ $room->room_id }}'">
+                          onclick="event.preventDefault();window.location='/booking?room_id={{ $room->room_id }}'">
                         Booking
                     </span>
                 @else
