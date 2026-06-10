@@ -27,19 +27,13 @@ Route::get('/', function () {
 */
 
 Route::get('/test-room', function () {
-
     $rooms = Room::with('schedules')->get();
-
     return $rooms;
-
 });
 
 Route::get('/test-booking', function () {
-
     $bookings = Booking::with('rooms')->get();
-
     return $bookings;
-
 });
 
 /*
@@ -54,40 +48,28 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 /*
 |--------------------------------------------------------------------------
-| USER ROUTE
+| USER ROUTE (mahasiswa)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth.custom')->group(function () {
 
-    // dashboard user
-    Route::get('/my-bookings', [BookingController::class, 'myBookings']);
+    // Dashboard mahasiswa
+    Route::get('/dashboard', [DashboardController::class, 'userDashboard']);
 
-    // User dashboard
-    Route::get('/dashboard', [DashboardController::class, 'userDashboard'])
-        ->middleware('auth.custom');
+    // Daftar ruangan — mahasiswa bisa lihat & booking
+    Route::get('/rooms', [RoomController::class, 'index']);
 
-    // booking perkuliahan
-    Route::get(
-        '/booking/perkuliahan',
-        [BookingController::class, 'createPerkuliahan']
-    );
+    // Booking perkuliahan
+    Route::get('/booking/perkuliahan', [BookingController::class, 'createPerkuliahan']);
+    Route::post('/booking/perkuliahan/store', [BookingController::class, 'storePerkuliahan']);
 
-    Route::post(
-        '/booking/perkuliahan/store',
-        [BookingController::class, 'storePerkuliahan']
-    );
+    // Booking kegiatan
+    Route::get('/booking/kegiatan', [BookingController::class, 'createKegiatan']);
+    Route::post('/booking/kegiatan/store', [BookingController::class, 'storeKegiatan']);
 
-    // booking kegiatan
-    Route::get(
-        '/booking/kegiatan',
-        [BookingController::class, 'createKegiatan']
-    );
-
-    Route::post(
-        '/booking/kegiatan/store',
-        [BookingController::class, 'storeKegiatan']
-    );
+    // History booking
+    Route::get('/booking/history', [BookingController::class, 'myBookings']);
 
 });
 
@@ -99,90 +81,21 @@ Route::middleware('auth.custom')->group(function () {
 
 Route::middleware('admin')->group(function () {
 
-    // test admin
     Route::get('/admin', function () {
-
         return 'HALAMAN ADMIN';
-
     });
 
-    // dashboard admin
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])
-        ->middleware('admin');
+    // Dashboard admin
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard']);
 
-    // room
-    Route::get('/rooms', [RoomController::class, 'index']);
-
+    // CRUD room (admin only)
     Route::get('/rooms/create', [RoomController::class, 'create']);
-
     Route::post('/rooms/store', [RoomController::class, 'store']);
-
     Route::get('/rooms/edit/{id}', [RoomController::class, 'edit']);
-
     Route::put('/rooms/update/{id}', [RoomController::class, 'update']);
-
     Route::get('/rooms/delete/{id}', [RoomController::class, 'destroy']);
 
-    // schedule
+    // Schedule
     Route::get('/schedules', [ScheduleController::class, 'index']);
-
-    Route::get('/schedules/create', [ScheduleController::class, 'create']);
-
-    Route::post('/schedules/store', [ScheduleController::class, 'store']);
-
-    Route::get('/schedules/edit/{id}', [ScheduleController::class, 'edit']);
-
-    Route::put('/schedules/update/{id}', [ScheduleController::class, 'update']);
-
-    Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy']);
-
-    // approval booking
-    Route::get(
-        '/admin/bookings',
-        [BookingController::class, 'pendingBookings']
-    );
-
-    Route::get(
-        '/admin/bookings/{id}/approve',
-        [BookingController::class, 'approveBooking']
-    );
-
-    Route::get(
-        '/admin/bookings/{id}/reject',
-        [BookingController::class, 'rejectBooking']
-    );
-
-    // semua booking
-    Route::get(
-        '/admin/all-bookings',
-        [BookingController::class, 'allBookings']
-    );
-
-    // kegiatan
-    Route::get(
-        '/admin/kegiatan',
-        [KegiatanController::class, 'index']
-    )->middleware('admin');
-
-    Route::get(
-        '/admin/kegiatan/edit/{id}',
-        [KegiatanController::class, 'edit']
-    )->middleware('admin');
-
-    Route::put(
-        '/admin/kegiatan/update/{id}',
-        [KegiatanController::class, 'update']
-    )->middleware('admin');
-
-    Route::get(
-        '/admin/kegiatan/delete/{id}',
-        [KegiatanController::class, 'destroy']
-    )->middleware('admin');
-
-    // download template surat
-    Route::get(
-        '/download-template-surat',
-        [BookingController::class, 'downloadTemplate']
-    );
 
 });
