@@ -60,7 +60,12 @@
             $lantai  = 'Lantai ' . (($room->room_id % 3) + 1);
             $isAvail = $room->status === 'tersedia';
         @endphp
-        <div class="cr-rl-card" data-name="{{ strtolower($room->nama_ruangan) }}" data-kapasitas="{{ $room->kapasitas }}">
+        <a href="/rooms/{{ $room->room_id }}"
+           class="cr-rl-card"
+           data-name="{{ strtolower($room->nama_ruangan) }}"
+           data-kapasitas="{{ $room->kapasitas }}">
+
+            {{-- Thumbnail --}}
             <div class="cr-rl-card__thumb cr-rl-card__thumb--{{ $variant }}">
                 <svg viewBox="0 0 120 85" xmlns="http://www.w3.org/2000/svg" class="cr-rl-svg">
                     <rect x="12" y="6" width="96" height="26" rx="3" fill="rgba(255,255,255,0.55)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
@@ -80,18 +85,25 @@
                     <span class="cr-rl-card__unavail-label">Tidak Tersedia</span>
                 @endif
             </div>
+
+            {{-- Info --}}
             <div class="cr-rl-card__body">
                 <p class="cr-rl-card__name">{{ $room->nama_ruangan }}</p>
                 <p class="cr-rl-card__lantai">{{ $lantai }}</p>
                 <p class="cr-rl-card__meta">Capacity: {{ $room->kapasitas }}</p>
                 <p class="cr-rl-card__fasilitas">Fasilitas: 🖥️ 📶 ❄️ AC</p>
                 @if($isAvail)
-                    <a href="/booking/perkuliahan?room_id={{ $room->room_id }}" class="cr-rl-card__btn">Booking</a>
+                    {{-- stop propagation supaya klik Booking tidak trigger link card --}}
+                    <span class="cr-rl-card__btn"
+                          onclick="event.preventDefault();window.location='/booking/perkuliahan?room_id={{ $room->room_id }}'">
+                        Booking
+                    </span>
                 @else
                     <span class="cr-rl-card__btn cr-rl-card__btn--disabled">Tidak Tersedia</span>
                 @endif
             </div>
-        </div>
+
+        </a>
         @empty
         <div class="cr-rl-empty"><span>🏫</span><p>Belum ada ruangan terdaftar.</p></div>
         @endforelse
@@ -104,8 +116,10 @@
 </div>
 <script>
 (function(){
-    const s=document.getElementById('searchInput'),k=document.getElementById('filterKapasitas'),
-          cards=document.querySelectorAll('.cr-rl-card'),nr=document.getElementById('noResult');
+    const s=document.getElementById('searchInput'),
+          k=document.getElementById('filterKapasitas'),
+          cards=document.querySelectorAll('.cr-rl-card'),
+          nr=document.getElementById('noResult');
     function f(){
         const q=s.value.toLowerCase().trim(),kv=k.value;let v=0;
         cards.forEach(c=>{
