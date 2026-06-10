@@ -60,14 +60,14 @@
                     <span class="cr-rd-info-icon">👥</span>
                     <div>
                         <p class="cr-rd-info-label">Kapasitas</p>
-                        <p class="cr-rd-info-val">{{ $room->kapasitas }} orang • Lantai {{ ($room->room_id % 3) + 1 }}</p>
+                        <p class="cr-rd-info-val">{{ $room->kapasitas }} orang</p>
                     </div>
                 </div>
                 <div class="cr-rd-info-item">
                     <span class="cr-rd-info-icon">📍</span>
                     <div>
                         <p class="cr-rd-info-label">Lokasi</p>
-                        <p class="cr-rd-info-val">Gedung Utama</p>
+                        <p class="cr-rd-info-val">Gedung Utama • Lantai {{ ($room->room_id % 3) + 1 }}</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
             </p>
 
             @if($room->status === 'tersedia')
-                <a href="/booking/perkuliahan?room_id={{ $room->room_id }}"
+                <a href="/booking?room_id={{ $room->room_id }}"
                    class="cr-rd-booking-btn">Booking Sekarang</a>
             @else
                 <span class="cr-rd-booking-btn cr-rd-booking-btn--disabled">Tidak Tersedia</span>
