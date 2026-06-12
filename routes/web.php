@@ -37,8 +37,10 @@ Route::middleware('auth.custom')->group(function () {
     });
 
     // Booking perkuliahan
-    Route::get('/booking/perkuliahan',        [BookingController::class, 'createPerkuliahan']);
-    Route::post('/booking/perkuliahan/store', [BookingController::class, 'storePerkuliahan']);
+    Route::get('/booking/perkuliahan',          [BookingController::class, 'createPerkuliahan']);
+    Route::post('/booking/perkuliahan/preview', [BookingController::class, 'previewPerkuliahan']);   // step 1 -> 2
+    Route::post('/booking/perkuliahan/store',   [BookingController::class, 'storePerkuliahan']);     // step 2 -> proses
+    Route::get('/booking/perkuliahan/berhasil/{id}', [BookingController::class, 'berhasilPerkuliahan']); // step 3
 
     // Cek ketersediaan realtime (AJAX)
     Route::post('/booking/cek-ketersediaan',  [BookingController::class, 'cekKetersediaan']);

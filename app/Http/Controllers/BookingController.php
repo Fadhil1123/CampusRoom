@@ -102,7 +102,63 @@ class BookingController extends Controller
     }
 
     // =====================================
-    // SIMPAN BOOKING PERKULIAHAN
+    // STEP 2: PREVIEW / KONFIRMASI BOOKING PERKULIAHAN
+    // (Form step 1 submit ke sini sebelum disimpan ke DB)
+    // =====================================
+
+    public function previewPerkuliahan(Request $request)
+    {
+        $request->validate([
+            'room_id'     => 'required',
+            'mata_kuliah' => 'required|string',
+            'dosen'       => 'required|string',
+            'tanggal'     => 'required|date',
+            'jam_mulai'   => 'required',
+            'jam_selesai' => 'required',
+        ]);
+
+        $room = Room::findOrFail($request->room_id);
+
+        // Format hari & tanggal dalam Bahasa Indonesia
+        $hariMap = [
+            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu',
+        ];
+        $bulanMap = [
+            'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
+            'April' => 'April', 'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli',
+            'August' => 'Agustus', 'September' => 'September', 'October' => 'Oktober',
+            'November' => 'November', 'December' => 'Desember',
+        ];
+
+        $timestamp = strtotime($request->tanggal);
+        $hariEn    = date('l', $timestamp);
+        $bulanEn   = date('F', $timestamp);
+
+        $tanggalFormatted = ($hariMap[$hariEn] ?? $hariEn) . ', '
+            . date('d', $timestamp) . ' '
+            . ($bulanMap[$bulanEn] ?? $bulanEn) . ' '
+            . date('Y', $timestamp);
+
+        // Hitung durasi (jam)
+        $mulai   = strtotime($request->jam_mulai);
+        $selesai = strtotime($request->jam_selesai);
+        $durasiJam = max(0, round(($selesai - $mulai) / 3600, 1));
+
+        return view('bookings.perkuliahan_konfirmasi', [
+            'room'             => $room,
+            'mata_kuliah'      => $request->mata_kuliah,
+            'dosen'            => $request->dosen,
+            'tanggal'          => $request->tanggal,
+            'tanggal_formatted'=> $tanggalFormatted,
+            'jam_mulai'        => $request->jam_mulai,
+            'jam_selesai'      => $request->jam_selesai,
+            'durasi'           => $durasiJam,
+        ]);
+    }
+
+    // =====================================
+    // STEP 3 (PROSES): SIMPAN BOOKING PERKULIAHAN
     // =====================================
 
     public function storePerkuliahan(Request $request)
@@ -130,7 +186,7 @@ class BookingController extends Controller
             ->exists();
 
         if ($bentrokSchedule) {
-            return back()->with('error', 'Ruangan sedang dipakai jadwal kuliah!');
+            return redirect('/booking/perkuliahan')->with('error', 'Ruangan sedang dipakai jadwal kuliah!');
         }
 
         $bentrokBooking = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
@@ -144,7 +200,7 @@ class BookingController extends Controller
             ->exists();
 
         if ($bentrokBooking) {
-            return back()->with('error', 'Ruangan sudah dibooking pada waktu tersebut!');
+            return redirect('/booking/perkuliahan')->with('error', 'Ruangan sudah dibooking pada waktu tersebut!');
         }
 
         $booking = Booking::create([
@@ -165,7 +221,18 @@ class BookingController extends Controller
             'room_id'    => $request->room_id,
         ]);
 
-        return redirect('/dashboard')->with('success', 'Booking perkuliahan berhasil!');
+        return redirect('/booking/perkuliahan/berhasil/' . $booking->booking_id);
+    }
+
+    // =====================================
+    // STEP 3 (TAMPILAN): BOOKING BERHASIL
+    // =====================================
+
+    public function berhasilPerkuliahan($id)
+    {
+        $booking = Booking::with('rooms')->findOrFail($id);
+
+        return view('bookings.perkuliahan_berhasil', compact('booking'));
     }
 
     // =====================================
