@@ -36,18 +36,26 @@ Route::middleware('auth.custom')->group(function () {
         return view('bookings.pilih');
     });
 
-    // Booking perkuliahan
-    Route::get('/booking/perkuliahan',          [BookingController::class, 'createPerkuliahan']);
-    Route::post('/booking/perkuliahan/preview', [BookingController::class, 'previewPerkuliahan']);   // step 1 -> 2
-    Route::post('/booking/perkuliahan/store',   [BookingController::class, 'storePerkuliahan']);     // step 2 -> proses
-    Route::get('/booking/perkuliahan/berhasil/{id}', [BookingController::class, 'berhasilPerkuliahan']); // step 3
+    // ===== BOOKING PERKULIAHAN: STEP 1 - 2 - 3 =====
+    Route::get('/booking/perkuliahan',             [BookingController::class, 'createPerkuliahan']);          // STEP 1: form
+    Route::post('/booking/perkuliahan/konfirmasi', [BookingController::class, 'konfirmasiPerkuliahan']);       // STEP 1 -> validasi -> simpan session
+    Route::get('/booking/perkuliahan/konfirmasi',  [BookingController::class, 'showKonfirmasiPerkuliahan']);   // STEP 2: tampil konfirmasi
+    Route::post('/booking/perkuliahan/store',      [BookingController::class, 'storePerkuliahan']);           // STEP 2 -> simpan DB
+    Route::get('/booking/perkuliahan/selesai',     [BookingController::class, 'selesaiPerkuliahan']);          // STEP 3: selesai
 
-    // Cek ketersediaan realtime (AJAX)
+    // ===== BOOKING KEGIATAN: STEP 1 - 2 - 3 =====
+    Route::get('/booking/kegiatan',             [BookingController::class, 'createKegiatan']);          // STEP 1: form
+    Route::post('/booking/kegiatan/konfirmasi', [BookingController::class, 'konfirmasiKegiatan']);       // STEP 1 -> validasi+upload temp -> session
+    Route::get('/booking/kegiatan/konfirmasi',  [BookingController::class, 'showKonfirmasiKegiatan']);   // STEP 2: tampil konfirmasi
+    Route::post('/booking/kegiatan/store',      [BookingController::class, 'storeKegiatan']);           // STEP 2 -> simpan DB
+    Route::get('/booking/kegiatan/selesai',     [BookingController::class, 'selesaiKegiatan']);          // STEP 3: selesai
+    Route::post('/booking/kegiatan/batal',      [BookingController::class, 'batalKegiatan']);           // batal dari step 2
+
+    // Cek ketersediaan realtime (AJAX) — dipakai perkuliahan & kegiatan
     Route::post('/booking/cek-ketersediaan',  [BookingController::class, 'cekKetersediaan']);
 
-    // Booking kegiatan
-    Route::get('/booking/kegiatan',           [BookingController::class, 'createKegiatan']);
-    Route::post('/booking/kegiatan/store',    [BookingController::class, 'storeKegiatan']);
+    // Download template surat
+    Route::get('/booking/download-template', [BookingController::class, 'downloadTemplate']);
 
     // Riwayat
     Route::get('/booking/history',            [BookingController::class, 'myBookings']);
