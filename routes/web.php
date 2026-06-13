@@ -43,16 +43,17 @@ Route::middleware('auth.custom')->group(function () {
     Route::post('/booking/perkuliahan/store',      [BookingController::class, 'storePerkuliahan']);           // STEP 2 -> simpan DB
     Route::get('/booking/perkuliahan/selesai',     [BookingController::class, 'selesaiPerkuliahan']);          // STEP 3: selesai
 
-    // ===== BOOKING KEGIATAN: STEP 1 - 2 - 3 =====
+    // ===== BOOKING KEGIATAN: STEP 1 - 2 - 3 (MULTI-ROOM) =====
     Route::get('/booking/kegiatan',             [BookingController::class, 'createKegiatan']);          // STEP 1: form
-    Route::post('/booking/kegiatan/konfirmasi', [BookingController::class, 'konfirmasiKegiatan']);       // STEP 1 -> validasi+upload temp -> session
+    Route::post('/booking/kegiatan/konfirmasi', [BookingController::class, 'konfirmasiKegiatan']);       // STEP 1 -> validasi multi-room+upload temp -> session
     Route::get('/booking/kegiatan/konfirmasi',  [BookingController::class, 'showKonfirmasiKegiatan']);   // STEP 2: tampil konfirmasi
-    Route::post('/booking/kegiatan/store',      [BookingController::class, 'storeKegiatan']);           // STEP 2 -> simpan DB
+    Route::post('/booking/kegiatan/store',      [BookingController::class, 'storeKegiatan']);           // STEP 2 -> simpan DB (multi booking_rooms)
     Route::get('/booking/kegiatan/selesai',     [BookingController::class, 'selesaiKegiatan']);          // STEP 3: selesai
     Route::post('/booking/kegiatan/batal',      [BookingController::class, 'batalKegiatan']);           // batal dari step 2
 
-    // Cek ketersediaan realtime (AJAX) — dipakai perkuliahan & kegiatan
-    Route::post('/booking/cek-ketersediaan',  [BookingController::class, 'cekKetersediaan']);
+    // Cek ketersediaan realtime (AJAX)
+    Route::post('/booking/cek-ketersediaan',       [BookingController::class, 'cekKetersediaan']);       // single room (perkuliahan)
+    Route::post('/booking/cek-ketersediaan-multi', [BookingController::class, 'cekKetersediaanMulti']);   // multi room (kegiatan)
 
     // Download template surat
     Route::get('/booking/download-template', [BookingController::class, 'downloadTemplate']);

@@ -35,13 +35,16 @@
     <section class="cr-bk-section">
         <h2 class="cr-bk-section__title">🗂️ Ringkasan Booking</h2>
 
-        {{-- Ruangan & Jenis Booking --}}
+        {{-- Ruangan (multi) & Jenis Booking --}}
         <div class="cr-konf-grid">
-            <div class="cr-konf-item">
-                <div class="cr-konf-item__icon cr-konf-item__icon--yellow">🏢</div>
-                <div>
-                    <p class="cr-konf-item__label">Ruangan</p>
-                    <p class="cr-konf-item__val">{{ $room->nama_ruangan }}</p>
+            <div class="cr-konf-item-full">
+                <p class="cr-konf-item__label">
+                    Ruangan ({{ $rooms->count() }})
+                </p>
+                <div class="cr-konf-room-list">
+                    @foreach($rooms as $room)
+                    <span class="cr-konf-room-chip">🏢 {{ $room->nama_ruangan }}</span>
+                    @endforeach
                 </div>
             </div>
             <div class="cr-konf-item">
@@ -133,6 +136,13 @@
 
     </section>
 
+    {{-- ======== INFO MULTI-ROOM ======== --}}
+    @if($rooms->count() > 1)
+    <div class="cr-konf-multi-info">
+        ℹ️ Booking ini mencakup <strong>{{ $rooms->count() }} ruangan</strong> sekaligus dalam satu pengajuan. Jika salah satu ruangan tidak tersedia saat diproses, seluruh booking akan ditolak.
+    </div>
+    @endif
+
     {{-- ======== STATUS BANNER ======== --}}
     <div class="cr-konf-status cr-konf-status--diajukan">
         ✔ Booking Diajukan! ✅
@@ -199,6 +209,15 @@
 .cr-konf-item__val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 700; color: #1A2340; margin: 0; }
 .cr-konf-item__val--lg { font-size: 0.938rem; }
 
+/* Multi-room chips */
+.cr-konf-room-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.cr-konf-room-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(244,180,0,0.12); color: #1A2340;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+}
+
 .cr-konf-status-badge {
     display: inline-flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;
@@ -209,6 +228,14 @@
 .cr-konf-ket { border-top: 1px solid #EEF2FB; padding-top: 16px; margin-top: 4px; }
 .cr-konf-ket__title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 800; color: #1A2340; margin: 0 0 6px; }
 .cr-konf-ket__text { font-family: 'DM Sans', sans-serif; font-size: 0.838rem; color: #5A6A8A; line-height: 1.6; margin: 0; }
+
+/* Multi-room info banner */
+.cr-konf-multi-info {
+    background: rgba(79,195,247,0.10); border: 1.5px solid rgba(79,195,247,0.25);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.813rem; color: #0277BD; line-height: 1.6;
+}
+.cr-konf-multi-info strong { font-weight: 700; }
 
 /* Status banner */
 .cr-konf-status {

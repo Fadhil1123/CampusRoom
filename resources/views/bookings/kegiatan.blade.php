@@ -21,6 +21,7 @@
                     <li>Pengajuan minimal H-2 sebelum tanggal kegiatan</li>
                     <li>Surat peminjaman yang ditandatangani Kaprodi</li>
                     <li>Persetujuan Admin (tidak auto-approve)</li>
+                    <li>Bisa memilih lebih dari satu ruangan sekaligus</li>
                 </ol>
             </div>
             <span class="cr-kg-info__toggle" id="infoToggle">▾ Collapsible</span>
@@ -53,61 +54,50 @@
     <form action="/booking/kegiatan/konfirmasi" method="POST" id="formKegiatan" enctype="multipart/form-data">
         @csrf
 
-        {{-- ======== RUANGAN YANG DIPILIH ======== --}}
+        {{-- ======== RUANGAN YANG DIPILIH (MULTI-ROOM) ======== --}}
         <section class="cr-bk-section">
-            <h2 class="cr-bk-section__title">📌 Ruangan yang Dipilih</h2>
+            <h2 class="cr-bk-section__title">
+                📌 Pilih Ruangan
+                <span class="cr-kg-multi-tag">Bisa pilih lebih dari satu</span>
+            </h2>
 
-            <div class="cr-bk-room-card">
-                <div class="cr-bk-room-card__img">
-                    <svg viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-                        <rect width="80" height="60" fill="#E8F4F8" rx="4"/>
-                        <rect x="6" y="6" width="68" height="30" rx="2" fill="#F0F8FF" stroke="#B0D4E8" stroke-width="1"/>
-                        <rect x="10" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="24" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="38" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="52" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="10" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="24" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="38" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="52" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
-                        <rect x="66" y="42" width="8" height="14" rx="1.5" fill="#A8C8D8"/>
-                    </svg>
-                </div>
-                <div class="cr-bk-room-card__info">
-                    <p class="cr-bk-room-card__name" id="roomName">
-                        @if($selectedRoom) {{ $selectedRoom->nama_ruangan }} @else Pilih Ruangan @endif
-                    </p>
-                    <div class="cr-bk-room-card__meta">
-                        <span id="roomKapasitas">
-                            @if($selectedRoom) 👥 {{ $selectedRoom->kapasitas }} peserta @else – @endif
-                        </span>
-                        <span>🏢 Lantai 1</span>
-                        <span>🏛️ Gedung A</span>
-                        <span id="roomStatus">
-                            <span class="cr-bk-badge cr-bk-badge--yellow">✅ Perlu persetujuan admin</span>
-                        </span>
+            <div class="cr-kg-room-grid" id="roomGrid">
+                @foreach($rooms as $room)
+                <label class="cr-kg-room-option" data-room-id="{{ $room->room_id }}">
+                    <input type="checkbox" name="room_ids[]" value="{{ $room->room_id }}"
+                        class="cr-kg-room-checkbox"
+                        data-nama="{{ $room->nama_ruangan }}"
+                        {{ $selectedRoomId == $room->room_id ? 'checked' : '' }}>
+                    <div class="cr-kg-room-option__img">
+                        <svg viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                            <rect width="80" height="60" fill="#E8F4F8" rx="4"/>
+                            <rect x="6" y="6" width="68" height="30" rx="2" fill="#F0F8FF" stroke="#B0D4E8" stroke-width="1"/>
+                            <rect x="10" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="24" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="38" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="52" y="42" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="10" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="24" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="38" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="52" y="50" width="10" height="6" rx="1.5" fill="#C8DDE8"/>
+                            <rect x="66" y="42" width="8" height="14" rx="1.5" fill="#A8C8D8"/>
+                        </svg>
                     </div>
-                </div>
-                <button type="button" class="cr-bk-ganti-btn" id="btnGantiRuangan">⇄ Ganti Ruangan</button>
+                    <div class="cr-kg-room-option__info">
+                        <p class="cr-kg-room-option__name">{{ $room->nama_ruangan }}</p>
+                        <p class="cr-kg-room-option__meta">👥 {{ $room->kapasitas }} peserta</p>
+                    </div>
+                    <div class="cr-kg-room-option__check">
+                        <span class="cr-kg-room-option__check-icon">✓</span>
+                    </div>
+                    <span class="cr-kg-room-option__avail" data-avail-for="{{ $room->room_id }}"></span>
+                </label>
+                @endforeach
             </div>
 
-            <div class="cr-bk-room-select-wrap" id="roomSelectWrap" style="{{ $selectedRoom ? 'display:none' : '' }}">
-                <label class="cr-bk-label">Pilih Ruangan</label>
-                <select id="roomSelect" class="cr-bk-select" required>
-                    <option value="">-- Pilih Ruangan --</option>
-                    @foreach($rooms as $room)
-                        <option value="{{ $room->room_id }}"
-                            data-nama="{{ $room->nama_ruangan }}"
-                            data-kapasitas="{{ $room->kapasitas }}"
-                            {{ $selectedRoom && $selectedRoom->room_id == $room->room_id ? 'selected' : '' }}>
-                            {{ $room->nama_ruangan }} ({{ $room->kapasitas }} orang)
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <input type="hidden" name="room_id" id="roomIdHidden"
-                value="{{ $selectedRoom ? $selectedRoom->room_id : old('room_id') }}">
+            <p class="cr-kg-room-empty-warn" id="roomEmptyWarn" style="display:none">
+                ⚠️ Pilih minimal satu ruangan.
+            </p>
         </section>
 
         {{-- ======== DATA KEGIATAN ======== --}}
@@ -224,10 +214,13 @@
                 </div>
             </div>
 
+            {{-- Per-room availability list --}}
+            <div class="cr-kg-avail-list" id="availList"></div>
+
             <div class="cr-bk-conflict-box" id="conflictBox" style="display:none">
                 <span class="cr-bk-conflict-icon">🔴</span>
                 <div>
-                    <p class="cr-bk-conflict-title">Konflik Warning!</p>
+                    <p class="cr-bk-conflict-title">Konflik Warning! Seluruh booking akan ditolak.</p>
                     <p class="cr-bk-conflict-detail" id="conflictDetail"></p>
                 </div>
             </div>
@@ -251,7 +244,7 @@
 </div>
 
 <style>
-/* ===== Reuse base section / room card / badge / form styles ===== */
+/* ===== Base section / form styles ===== */
 .cr-bk-content { max-width: 760px; }
 
 .cr-bk-stepper { display: flex; align-items: center; gap: 0; margin: 20px 0 28px; }
@@ -289,27 +282,10 @@
     font-size: 0.7rem; font-weight: 700; color: #4FC3F7;
     background: rgba(79,195,247,0.12); padding: 2px 8px; border-radius: 999px;
 }
-
-.cr-bk-room-card {
-    display: flex; align-items: center; gap: 16px; padding: 14px;
-    background: #F8FAFF; border: 1.5px solid #EEF2FB; border-radius: 12px; margin-bottom: 0;
+.cr-kg-multi-tag {
+    font-size: 0.7rem; font-weight: 700; color: #F4B400;
+    background: rgba(244,180,0,0.12); padding: 2px 8px; border-radius: 999px;
 }
-.cr-bk-room-card__img { width: 90px; height: 66px; border-radius: 10px; overflow: hidden; background: #E8F4F8; flex-shrink: 0; }
-.cr-bk-room-card__info { flex: 1; }
-.cr-bk-room-card__name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: #1A2340; margin: 0 0 6px; }
-.cr-bk-room-card__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: #5A6A8A; }
-.cr-bk-badge { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.7rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
-.cr-bk-badge--green  { background: #D1FAF0; color: #00C896; }
-.cr-bk-badge--red    { background: #FFE4E9; color: #FF4D6D; }
-.cr-bk-badge--yellow { background: #FFF3CD; color: #E6820A; }
-
-.cr-bk-ganti-btn {
-    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
-    color: #4FC3F7; background: none; border: none; cursor: pointer;
-    padding: 4px 0; flex-shrink: 0; text-decoration: underline; transition: color .15s;
-}
-.cr-bk-ganti-btn:hover { color: #0277BD; }
-.cr-bk-room-select-wrap { margin-top: 14px; }
 
 .cr-bk-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .cr-bk-field { display: flex; flex-direction: column; gap: 6px; }
@@ -323,13 +299,6 @@
 .cr-bk-input:focus { border-color: #F4B400; box-shadow: 0 0 0 3px rgba(244,180,0,.10); background: #fff; }
 .cr-bk-input--time { padding: 9px 10px; text-align: center; }
 .cr-bk-textarea { resize: vertical; min-height: 70px; font-family: 'DM Sans', sans-serif; }
-
-.cr-bk-select {
-    width: 100%; padding: 11px 32px 11px 14px; border: 1.5px solid #E8EEF7; border-radius: 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: #1A2340;
-    background: #FAFBFF; outline: none; appearance: none; cursor: pointer; transition: border-color .2s;
-}
-.cr-bk-select:focus { border-color: #F4B400; box-shadow: 0 0 0 3px rgba(244,180,0,.10); }
 
 .cr-bk-time-row { display: flex; align-items: center; gap: 8px; }
 .cr-bk-time-wrap { flex: 1; }
@@ -352,6 +321,19 @@
     font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.813rem; font-weight: 600; color: #E6820A;
     display: flex; align-items: center;
 }
+
+/* Per-room availability list */
+.cr-kg-avail-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.cr-kg-avail-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 8px 14px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    background: #F8FAFF; border: 1px solid #EEF2FB;
+}
+.cr-kg-avail-row.ok { background: #F0FFFA; border-color: rgba(0,200,150,.2); color: #00C896; }
+.cr-kg-avail-row.bad { background: #FFF0F3; border-color: rgba(255,77,109,.2); color: #FF4D6D; }
+.cr-kg-avail-row__name { font-weight: 700; color: #1A2340; }
+.cr-kg-avail-row.ok .cr-kg-avail-row__name,
+.cr-kg-avail-row.bad .cr-kg-avail-row__name { color: inherit; }
 
 .cr-bk-conflict-box {
     padding: 12px 16px; background: #FFF0F3; border: 1.5px solid #FFD0D8; border-radius: 10px;
@@ -449,8 +431,94 @@
 }
 .cr-kg-template-link:hover { color: #0277BD; }
 
+/* ===== Multi-room checkbox grid ===== */
+.cr-kg-room-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.cr-kg-room-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #F8FAFF;
+    border: 1.5px solid #EEF2FB;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.cr-kg-room-option:hover {
+    border-color: rgba(244,180,0,.35);
+}
+.cr-kg-room-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+}
+.cr-kg-room-option__img {
+    width: 56px; height: 42px; border-radius: 8px; overflow: hidden; background: #E8F4F8; flex-shrink: 0;
+}
+.cr-kg-room-option__info { flex: 1; min-width: 0; }
+.cr-kg-room-option__name {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 700; color: #1A2340; margin: 0 0 2px;
+}
+.cr-kg-room-option__meta {
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: #5A6A8A; margin: 0;
+}
+.cr-kg-room-option__check {
+    width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid #D0D9EE;
+    background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background .15s, border-color .15s;
+}
+.cr-kg-room-option__check-icon {
+    font-size: 0.75rem; color: #fff; opacity: 0; transition: opacity .15s; font-weight: 800;
+}
+
+/* Checked state */
+.cr-kg-room-checkbox:checked ~ .cr-kg-room-option__check {
+    background: linear-gradient(135deg, #F4B400 0%, #FFB020 100%);
+    border-color: transparent;
+}
+.cr-kg-room-checkbox:checked ~ .cr-kg-room-option__check .cr-kg-room-option__check-icon {
+    opacity: 1;
+}
+.cr-kg-room-option:has(.cr-kg-room-checkbox:checked) {
+    border-color: #F4B400;
+    background: #FFFBF0;
+    box-shadow: 0 0 0 3px rgba(244,180,0,.10);
+}
+
+/* Per-room availability badge on card */
+.cr-kg-room-option__avail {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 2px 8px;
+    border-radius: 999px;
+    display: none;
+}
+.cr-kg-room-option__avail.show-ok {
+    display: inline-block;
+    background: #D1FAF0; color: #00C896;
+}
+.cr-kg-room-option__avail.show-bad {
+    display: inline-block;
+    background: #FFE4E9; color: #FF4D6D;
+}
+
+.cr-kg-room-empty-warn {
+    margin: 12px 0 0;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.813rem; font-weight: 700; color: #FF4D6D;
+}
+
 @media (max-width: 600px) {
     .cr-bk-form-grid { grid-template-columns: 1fr; }
+    .cr-kg-room-grid { grid-template-columns: 1fr; }
 }
 </style>
 
@@ -462,20 +530,17 @@
     infoHead.addEventListener('click', () => infoBanner.classList.toggle('collapsed'));
 
     // ─── Elemen ───────────────────────────────────────────────
-    const roomSelect    = document.getElementById('roomSelect');
-    const roomIdHidden  = document.getElementById('roomIdHidden');
-    const roomName      = document.getElementById('roomName');
-    const roomKapasitas = document.getElementById('roomKapasitas');
-    const btnGanti      = document.getElementById('btnGantiRuangan');
-    const roomSelectWrap= document.getElementById('roomSelectWrap');
+    const roomCheckboxes = document.querySelectorAll('.cr-kg-room-checkbox');
+    const roomEmptyWarn  = document.getElementById('roomEmptyWarn');
 
-    const inputTanggal       = document.getElementById('inputTanggal');
-    const inputTanggalSelesai= document.getElementById('inputTanggalSelesai');
-    const inputMulai         = document.getElementById('inputJamMulai');
-    const inputSelesai       = document.getElementById('inputJamSelesai');
-    const h2Warning          = document.getElementById('h2Warning');
+    const inputTanggal        = document.getElementById('inputTanggal');
+    const inputTanggalSelesai = document.getElementById('inputTanggalSelesai');
+    const inputMulai          = document.getElementById('inputJamMulai');
+    const inputSelesai        = document.getElementById('inputJamSelesai');
+    const h2Warning           = document.getElementById('h2Warning');
 
     const availStatus   = document.getElementById('availStatus');
+    const availList     = document.getElementById('availList');
     const conflictBox   = document.getElementById('conflictBox');
     const conflictDetail= document.getElementById('conflictDetail');
     const btnSubmit     = document.getElementById('btnSubmit');
@@ -483,22 +548,6 @@
     const minTanggal = "{{ $minTanggal }}";
 
     let debounceTimer = null;
-
-    // ─── Ganti Ruangan toggle ──────────────────────────────────
-    btnGanti.addEventListener('click', () => {
-        roomSelectWrap.style.display = roomSelectWrap.style.display === 'none' ? '' : 'none';
-    });
-
-    if (roomSelect) {
-        roomSelect.addEventListener('change', () => {
-            const opt = roomSelect.options[roomSelect.selectedIndex];
-            roomIdHidden.value = opt.value;
-            roomName.textContent = opt.dataset.nama || 'Pilih Ruangan';
-            roomKapasitas.textContent = opt.dataset.kapasitas ? '👥 ' + opt.dataset.kapasitas + ' peserta' : '–';
-            roomSelectWrap.style.display = 'none';
-            triggerCek();
-        });
-    }
 
     // ─── Validasi H-2 ───────────────────────────────────────────
     function cekH2() {
@@ -515,7 +564,6 @@
     }
 
     inputTanggal.addEventListener('change', () => {
-        // auto-set tanggal selesai minimal sama dengan tanggal mulai
         if (inputTanggalSelesai.value && inputTanggalSelesai.value < inputTanggal.value) {
             inputTanggalSelesai.value = inputTanggal.value;
         }
@@ -524,7 +572,17 @@
         triggerCek();
     });
 
-    // ─── Cek Ketersediaan realtime ─────────────────────────────
+    // ─── Pilih ruangan (multi) trigger cek ────────────────────
+    roomCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+        // reset badge ruangan yg di-uncheck
+        if (!cb.checked) {
+            const badge = document.querySelector('.cr-kg-room-option__avail[data-avail-for="' + cb.value + '"]');
+            if (badge) { badge.className = 'cr-kg-room-option__avail'; badge.textContent = ''; }
+        }
+        triggerCek();
+    }));
+
+    // ─── Cek Ketersediaan realtime (multi-room) ────────────────
     function triggerCek() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(cekKetersediaan, 500);
@@ -533,45 +591,68 @@
         if (el) el.addEventListener('change', triggerCek);
     });
 
+    function getSelectedRoomIds() {
+        return Array.from(roomCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    }
+
     function cekKetersediaan() {
-        const roomId    = roomIdHidden.value;
+        const roomIds   = getSelectedRoomIds();
         const tanggal   = inputTanggal.value;
         const jamMulai  = inputMulai.value;
         const jamSelesai= inputSelesai.value;
 
-        if (!roomId || !tanggal || !jamMulai || !jamSelesai) {
+        availList.innerHTML = '';
+
+        if (roomIds.length === 0 || !tanggal || !jamMulai || !jamSelesai) {
             availStatus.className = 'cr-bk-avail-status';
-            availStatus.innerHTML = '<span class="cr-bk-avail-placeholder">🔎 Lengkapi data untuk cek ketersediaan...</span>';
+            availStatus.innerHTML = '<span class="cr-bk-avail-placeholder">🔎 Pilih ruangan & lengkapi data untuk cek ketersediaan...</span>';
             conflictBox.style.display = 'none';
             return;
         }
 
         availStatus.className = 'cr-bk-avail-status checking';
-        availStatus.innerHTML = '⏳ Mengecek ketersediaan...';
+        availStatus.innerHTML = '⏳ Mengecek ketersediaan ' + roomIds.length + ' ruangan...';
         conflictBox.style.display = 'none';
 
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
 
-        fetch('/booking/cek-ketersediaan', {
+        fetch('/booking/cek-ketersediaan-multi', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-            body: JSON.stringify({ room_id: roomId, tanggal, jam_mulai: jamMulai, jam_selesai: jamSelesai }),
+            body: JSON.stringify({ room_ids: roomIds, tanggal, jam_mulai: jamMulai, jam_selesai: jamSelesai }),
         })
         .then(r => r.json())
         .then(data => {
-            if (data.status === 'available') {
+            if (data.status === 'incomplete') return;
+
+            const conflicts = [];
+
+            (data.rooms || []).forEach(r => {
+                const badge = document.querySelector('.cr-kg-room-option__avail[data-avail-for="' + r.room_id + '"]');
+                const row = document.createElement('div');
+
+                if (r.status === 'available') {
+                    if (badge) { badge.className = 'cr-kg-room-option__avail show-ok'; badge.textContent = '✅ Tersedia'; }
+                    row.className = 'cr-kg-avail-row ok';
+                    row.innerHTML = '<span class="cr-kg-avail-row__name">' + r.nama + '</span><span>✅ Tersedia</span>';
+                } else {
+                    if (badge) { badge.className = 'cr-kg-room-option__avail show-bad'; badge.textContent = '❌ Bentrok'; }
+                    row.className = 'cr-kg-avail-row bad';
+                    row.innerHTML = '<span class="cr-kg-avail-row__name">' + r.nama + '</span><span>❌ Bentrok ' + (r.detail || '') + '</span>';
+                    conflicts.push(r.nama + (r.detail ? ' (' + r.detail + ')' : ''));
+                }
+                availList.appendChild(row);
+            });
+
+            if (conflicts.length === 0) {
                 availStatus.className = 'cr-bk-avail-status available';
-                availStatus.innerHTML = '✅ ' + data.message;
+                availStatus.innerHTML = '✅ Semua ruangan tersedia pada slot yang dipilih!';
                 conflictBox.style.display = 'none';
-            } else if (data.status === 'conflict') {
-                availStatus.className = 'cr-bk-avail-status';
-                availStatus.innerHTML = '❌ Tidak tersedia';
-                conflictDetail.textContent = data.message + (data.detail ? ' — ' + data.detail : '');
-                conflictBox.style.display = 'flex';
             } else {
                 availStatus.className = 'cr-bk-avail-status';
-                availStatus.innerHTML = '🔎 Lengkapi semua data...';
-                conflictBox.style.display = 'none';
+                availStatus.innerHTML = '❌ Ada ruangan tidak tersedia';
+                conflictDetail.textContent = conflicts.join(', ');
+                conflictBox.style.display = 'flex';
             }
         })
         .catch(() => {
@@ -595,15 +676,28 @@
         }
     });
 
-    // ─── Form submit guard: H-2 ─────────────────────────────────
+    // ─── Form submit guard: H-2 & minimal 1 ruangan ─────────────
     document.getElementById('formKegiatan').addEventListener('submit', function (e) {
+        let valid = true;
+
+        if (getSelectedRoomIds().length === 0) {
+            roomEmptyWarn.style.display = 'block';
+            valid = false;
+        } else {
+            roomEmptyWarn.style.display = 'none';
+        }
+
         if (!cekH2()) {
+            valid = false;
+        }
+
+        if (!valid) {
             e.preventDefault();
-            window.scrollTo({ top: inputTanggal.closest('section').offsetTop - 20, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 
-    if (roomIdHidden.value) triggerCek();
+    triggerCek();
     cekH2();
 })();
 </script>

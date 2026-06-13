@@ -91,11 +91,11 @@
                 <p class="cr-done-summary__label">Kegiatan</p>
                 <p class="cr-done-summary__val">{{ $done['nama_kegiatan'] }}</p>
             </div>
-            @if($room)
+            @if($rooms->count() > 0)
             <div class="cr-done-summary__divider"></div>
             <div>
-                <p class="cr-done-summary__label">Ruangan</p>
-                <p class="cr-done-summary__val">{{ $room->nama_ruangan }}</p>
+                <p class="cr-done-summary__label">Ruangan ({{ $rooms->count() }})</p>
+                <p class="cr-done-summary__val">{{ $rooms->pluck('nama_ruangan')->implode(', ') }}</p>
             </div>
             @endif
         </div>
