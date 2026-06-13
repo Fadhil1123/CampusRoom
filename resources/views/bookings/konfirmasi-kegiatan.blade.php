@@ -131,7 +131,14 @@
 
         <div class="cr-konf-ket">
             <p class="cr-konf-ket__title">📎 File Surat</p>
-            <p class="cr-konf-ket__text">{{ $draft['surat_nama_asli'] }}</p>
+            @if(!empty($draft['surat_temp']))
+                <a href="{{ asset('storage/' . $draft['surat_temp']) }}" class="cr-konf-surat-link" target="_blank" rel="noopener noreferrer">
+                    {{ $draft['surat_nama_asli'] }}
+                </a>
+                <p class="cr-konf-ket__hint">Klik untuk membuka isi surat di tab baru.</p>
+            @else
+                <p class="cr-konf-ket__text">{{ $draft['surat_nama_asli'] }}</p>
+            @endif
         </div>
 
     </section>
@@ -228,6 +235,33 @@
 .cr-konf-ket { border-top: 1px solid #EEF2FB; padding-top: 16px; margin-top: 4px; }
 .cr-konf-ket__title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 800; color: #1A2340; margin: 0 0 6px; }
 .cr-konf-ket__text { font-family: 'DM Sans', sans-serif; font-size: 0.838rem; color: #5A6A8A; line-height: 1.6; margin: 0; }
+.cr-konf-surat-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.838rem;
+    font-weight: 700;
+    color: #0277BD;
+    text-decoration: none;
+    background: rgba(79,195,247,0.10);
+    border: 1px solid rgba(79,195,247,0.20);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    transition: background .15s ease, transform .15s ease, border-color .15s ease;
+}
+.cr-konf-surat-link:hover {
+    background: rgba(79,195,247,0.16);
+    border-color: rgba(79,195,247,0.35);
+    transform: translateY(-1px);
+}
+.cr-konf-ket__hint {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #9AAFC8;
+    margin: 0;
+}
 
 /* Multi-room info banner */
 .cr-konf-multi-info {
