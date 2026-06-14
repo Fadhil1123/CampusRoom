@@ -61,6 +61,9 @@ Route::middleware('auth.custom')->group(function () {
     // Riwayat
     Route::get('/booking/history',            [BookingController::class, 'myBookings']);
 
+    // Jadwal Saya
+    Route::get('/jadwal-saya',                [DashboardController::class, 'jadwalSaya']);
+
 });
 
 // ADMIN
