@@ -58,6 +58,32 @@ class DashboardController extends Controller
         ));
     }
 
+    public function jadwalSaya()
+    {
+        $userId = session('user')->user_id;
+
+        $jadwalSaya = Booking::where('user_id', $userId)
+            ->whereIn('status', ['approved', 'pending'])
+            ->whereDate('tanggal', '>=', now()->toDateString())
+            ->with('rooms', 'kegiatan')
+            ->orderBy('tanggal', 'asc')
+            ->orderBy('jam_mulai', 'asc')
+            ->get();
+
+        $jadwalTerdekat = $jadwalSaya->first();
+        $jumlahJadwal = $jadwalSaya->count();
+        $jumlahDisetujui = $jadwalSaya->where('status', 'approved')->count();
+        $jumlahMenunggu = $jadwalSaya->where('status', 'pending')->count();
+
+        return view('bookings.jadwal', compact(
+            'jadwalSaya',
+            'jadwalTerdekat',
+            'jumlahJadwal',
+            'jumlahDisetujui',
+            'jumlahMenunggu'
+        ));
+    }
+
     // DASHBOARD ADMIN
 
     public function adminDashboard()

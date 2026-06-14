@@ -66,7 +66,7 @@
                 <span class="cr-nav-label">Booking Saya</span>
             </a>
             <a href="/jadwal-saya"
-               class="cr-sidebar__nav-item {{ request()->is('jadwal-saya') ? 'cr-sidebar__nav-item--active' : '' }}">
+                    class="cr-sidebar__nav-item {{ request()->is('jadwal-saya*') ? 'cr-sidebar__nav-item--active' : '' }}">
                 <span class="cr-nav-icon">📅</span>
                 <span class="cr-nav-label">Jadwal Saya</span>
             </a>
