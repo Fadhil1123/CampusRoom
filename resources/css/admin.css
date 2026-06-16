@@ -1,0 +1,395 @@
+/* ============================================================
+   CampusRoom — Admin Dashboard Styles
+   File: resources/css/admin.css
+   ============================================================ */
+
+/* ============================================================
+   ADMIN SIDEBAR OVERRIDES
+   ============================================================ */
+.cr-sidebar--admin {
+    background: linear-gradient(160deg, #1A2340 0%, #0F1628 60%, #14213D 100%);
+}
+
+/* Remove light blob on admin sidebar */
+.cr-sidebar--admin::before,
+.cr-sidebar--admin::after {
+    background: rgba(244, 180, 0, 0.06);
+}
+
+/* Logo on dark bg */
+.cr-sidebar--admin .cr-logo-campus { color: #F4B400; }
+.cr-sidebar--admin .cr-logo-room   { color: #FFFFFF; }
+.cr-sidebar--admin .cr-sidebar__version { color: rgba(255,255,255,0.3); }
+
+/* Avatar admin — gold ring */
+.cr-sidebar__avatar-initials--admin {
+    background: linear-gradient(135deg, #F4B400 0%, #FFD54F 100%);
+    color: #1A2340;
+    position: relative;
+}
+
+/* Verified badge */
+.cr-sidebar__verified {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: #4FC3F7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: #fff;
+    font-weight: 800;
+    border: 1.5px solid #0F1628;
+}
+.cr-sidebar__avatar-wrap { position: relative; }
+
+/* Profile text on dark */
+.cr-sidebar--admin .cr-sidebar__name  { color: #FFFFFF; }
+.cr-sidebar--admin .cr-sidebar__role  { color: rgba(255,255,255,0.5); }
+
+/* Admin badge pill */
+.cr-sidebar__admin-badge {
+    display: inline-block;
+    background: #FF4D6D;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 3px;
+}
+
+/* Notif on dark */
+.cr-sidebar--admin .cr-sidebar__notif {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.1);
+}
+.cr-sidebar--admin .cr-sidebar__notif-text { color: rgba(255,255,255,0.85); }
+.cr-sidebar--admin .cr-sidebar__notif-badge { color: rgba(255,255,255,0.7); }
+.cr-sidebar--admin .cr-sidebar__divider { background: rgba(255,255,255,0.08); }
+
+/* Nav items on dark */
+.cr-sidebar--admin .cr-sidebar__nav-item { color: rgba(255,255,255,0.55); }
+.cr-sidebar--admin .cr-sidebar__nav-item:hover {
+    background: rgba(255,255,255,0.08);
+    color: #FFFFFF;
+}
+.cr-sidebar--admin .cr-sidebar__nav-item--active {
+    background: rgba(244,180,0,0.18);
+    color: #F4B400;
+    border-color: rgba(244,180,0,0.3);
+    font-weight: 700;
+}
+
+/* Nav badge (approval count) */
+.cr-nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    background: #FF4D6D;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: 999px;
+    padding: 0 5px;
+    margin-left: 4px;
+}
+
+/* Bottom profile strip */
+.cr-sidebar__bottom-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 8px;
+    position: relative;
+    z-index: 2;
+}
+.cr-sidebar__bottom-avatar { flex-shrink: 0; }
+.cr-sidebar__avatar-img--sm { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.cr-sidebar__avatar-initials--sm {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.875rem !important;
+}
+.cr-sidebar__bottom-info { flex: 1; min-width: 0; }
+.cr-sidebar__bottom-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.788rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cr-sidebar__bottom-nim {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.688rem; color: rgba(255,255,255,0.4); margin: 0;
+}
+.cr-sidebar__bottom-logout {
+    font-size: 1rem; color: rgba(255,255,255,0.4); text-decoration: none;
+    flex-shrink: 0; transition: color .15s;
+}
+.cr-sidebar__bottom-logout:hover { color: #FF4D6D; }
+
+/* ============================================================
+   ADMIN DASHBOARD CONTENT
+   ============================================================ */
+.cr-adm-content { max-width: 900px; }
+
+/* ── Welcome Banner ── */
+.cr-adm-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #1A2340 0%, #14213D 60%, #1e2d52 100%);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-top: 56px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    gap: 20px;
+}
+.cr-adm-welcome::before {
+    content: '';
+    position: absolute;
+    width: 240px; height: 240px;
+    background: rgba(244,180,0,0.08);
+    border-radius: 50%;
+    right: -60px; top: -80px;
+    filter: blur(30px);
+    pointer-events: none;
+}
+.cr-adm-welcome__copy { position: relative; z-index: 2; }
+.cr-adm-welcome__title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.375rem; font-weight: 700; color: #FFFFFF; margin: 0 0 8px;
+}
+.cr-adm-welcome__sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.938rem; color: rgba(255,255,255,0.7); margin: 0;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.cr-adm-welcome__badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #F4B400; color: #1A2340;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 800;
+    min-width: 24px; height: 24px; border-radius: 999px; padding: 0 6px;
+}
+.cr-adm-welcome__link {
+    position: relative; z-index: 2;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 800;
+    color: #F4B400; text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    transition: opacity .15s;
+}
+.cr-adm-welcome__link:hover { opacity: 0.8; }
+
+/* ── Stat Cards ── */
+.cr-adm-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.cr-adm-stat-card {
+    background: linear-gradient(135deg, #F4B400 0%, #FFB020 100%);
+    border-radius: 16px; padding: 18px 18px 10px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 100px; position: relative; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(244,180,0,0.25);
+}
+.cr-adm-stat-card__body { position: relative; z-index: 2; }
+.cr-adm-stat-card__label {
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem;
+    color: rgba(26,35,64,0.7); margin: 0 0 4px; font-weight: 500;
+}
+.cr-adm-stat-card__num {
+    font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700;
+    color: #1A2340; margin: 0; line-height: 1;
+}
+.cr-adm-stat-card__wave {
+    margin-top: 6px; opacity: 0.7;
+}
+.cr-adm-stat-card__wave svg { width: 100%; height: 30px; }
+
+/* ── Main Grid ── */
+.cr-adm-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.cr-adm-col-left, .cr-adm-col-right { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Panel ── */
+.cr-adm-panel {
+    background: #FFFFFF; border-radius: 16px; padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(26,35,64,0.06); border: 1.5px solid #EEF2FB;
+}
+.cr-adm-panel__head {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.cr-adm-panel__title {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.938rem; font-weight: 800;
+    color: #1A2340; margin: 0;
+}
+.cr-adm-panel__link {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
+    color: #4FC3F7; text-decoration: none; flex-shrink: 0;
+}
+.cr-adm-panel__link:hover { color: #0277BD; }
+
+/* ── Approval Cards ── */
+.cr-adm-approval-list { display: flex; flex-direction: column; gap: 10px; }
+.cr-adm-approval-card {
+    background: #F8FAFF; border: 1.5px solid #EEF2FB; border-radius: 12px;
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+}
+.cr-adm-approval-card__top {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+}
+.cr-adm-approval-card__name {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 700;
+    color: #1A2340; margin: 0 0 2px;
+}
+.cr-adm-approval-card__meta {
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: #5A6A8A; margin: 0;
+}
+.cr-adm-approval-card__rooms {
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: #9AAFC8; margin: 2px 0 0;
+    display: flex; align-items: center; gap: 6px;
+}
+.cr-adm-multi-badge {
+    background: rgba(79,195,247,0.12); color: #0277BD;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
+    padding: 1px 7px; border-radius: 999px;
+}
+.cr-adm-approval-card__date {
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: #9AAFC8;
+    white-space: nowrap; flex-shrink: 0; margin: 0;
+}
+.cr-adm-surat-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.7rem; font-weight: 700;
+    color: #00C896; background: #D1FAF0; padding: 2px 10px; border-radius: 999px;
+}
+.cr-adm-approval-card__actions { display: flex; gap: 6px; }
+.cr-adm-btn {
+    flex: 1; padding: 6px 8px; border-radius: 7px; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; font-weight: 700;
+    text-align: center; text-decoration: none; display: inline-flex;
+    align-items: center; justify-content: center; gap: 3px; transition: transform .12s, box-shadow .12s;
+}
+.cr-adm-btn--approve { background: #D1FAF0; color: #00C896; }
+.cr-adm-btn--approve:hover { background: #B8F0E0; transform: scale(1.02); }
+.cr-adm-btn--reject  { background: #FFE4E9; color: #FF4D6D; }
+.cr-adm-btn--reject:hover  { background: #FFD0D8; transform: scale(1.02); }
+.cr-adm-btn--detail  { background: #F0F4FF; color: #5A6A8A; }
+.cr-adm-btn--detail:hover  { background: #E8EEF7; }
+
+.cr-adm-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 28px 16px;
+}
+.cr-adm-empty span { font-size: 1.75rem; }
+.cr-adm-empty p {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.813rem;
+    font-weight: 600; color: #9AAFC8; margin: 0;
+}
+
+/* ── Chart ── */
+.cr-adm-chart { display: flex; flex-direction: column; gap: 8px; }
+.cr-adm-chart__row { display: flex; align-items: center; gap: 8px; }
+.cr-adm-chart__label {
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: #5A6A8A;
+    width: 36px; flex-shrink: 0; text-align: right;
+}
+.cr-adm-chart__bar-wrap {
+    flex: 1; background: #F0F4FF; border-radius: 4px; height: 12px; overflow: hidden;
+}
+.cr-adm-chart__bar {
+    height: 100%; background: linear-gradient(90deg, #F4B400 0%, #FFB020 100%);
+    border-radius: 4px; transition: width .6s ease;
+    min-width: 4px;
+}
+.cr-adm-chart__val {
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700;
+    color: #1A2340; width: 20px; text-align: right; flex-shrink: 0;
+}
+
+/* ── Aktivitas Terbaru ── */
+.cr-adm-aktivitas-list { display: flex; flex-direction: column; gap: 10px; }
+.cr-adm-aktivitas-row { display: flex; align-items: center; gap: 10px; }
+.cr-adm-aktivitas-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.cr-adm-aktivitas-dot--pending  { background: #F4B400; }
+.cr-adm-aktivitas-dot--approved { background: #00C896; }
+.cr-adm-aktivitas-dot--rejected { background: #FF4D6D; }
+.cr-adm-aktivitas-info { display: flex; flex-direction: column; gap: 0; flex: 1; }
+.cr-adm-aktivitas-label {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700; color: #1A2340;
+}
+.cr-adm-aktivitas-time {
+    font-family: 'DM Sans', sans-serif; font-size: 0.7rem; color: #9AAFC8;
+}
+
+/* ── Room Status Grid ── */
+.cr-adm-panel--rooms { margin-bottom: 32px; }
+.cr-adm-room-legend {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: #5A6A8A;
+}
+.cr-adm-legend-dot {
+    width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+}
+.cr-adm-legend-dot--available   { background: #00C896; }
+.cr-adm-legend-dot--inuse       { background: #FF4D6D; }
+.cr-adm-legend-dot--maintenance { background: #C8D5EE; }
+
+.cr-adm-room-grid {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;
+}
+.cr-adm-room-dot {
+    width: 22px; height: 22px; border-radius: 5px; cursor: pointer;
+    position: relative; transition: transform .15s;
+    flex-shrink: 0;
+}
+.cr-adm-room-dot:hover { transform: scale(1.3); z-index: 10; }
+.cr-adm-room-dot--available   { background: #00C896; }
+.cr-adm-room-dot--inuse       { background: #FF4D6D; }
+.cr-adm-room-dot--maintenance { background: #C8D5EE; }
+
+/* Tooltip */
+.cr-adm-room-dot__tooltip {
+    display: none;
+    position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+    background: #1A2340; color: #fff; border-radius: 8px; padding: 6px 10px;
+    white-space: nowrap; min-width: 100px; text-align: center;
+    font-family: 'DM Sans', sans-serif; font-size: 0.7rem; z-index: 20;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    flex-direction: column; gap: 1px;
+}
+.cr-adm-room-dot__tooltip strong {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 700;
+    display: block;
+}
+.cr-adm-room-dot:hover .cr-adm-room-dot__tooltip { display: flex; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .cr-adm-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .cr-adm-main-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .cr-adm-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .cr-adm-welcome { flex-direction: column; align-items: flex-start; }
+}
