@@ -633,4 +633,56 @@ class BookingController extends Controller
         $path = public_path('template/template_surat_peminjaman.docx');
         return response()->download($path);
     }
+
+    // =====================================
+    // DETAIL BOOKING USER
+    // =====================================
+
+    public function detailBooking($id)
+    {
+        $userId  = session('user')->user_id;
+        $booking = Booking::where('booking_id', $id)
+            ->where('user_id', $userId)
+            ->with('rooms', 'kegiatan')
+            ->firstOrFail();
+
+        return view('bookings.detail', compact('booking'));
+    }
+
+    // =====================================
+    // BATALKAN BOOKING (dari halaman riwayat, hanya pending)
+    // =====================================
+
+    public function batalkanBookingUser($id)
+    {
+        $userId  = session('user')->user_id;
+        $booking = Booking::where('booking_id', $id)
+            ->where('user_id', $userId)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking tidak ditemukan atau tidak bisa dibatalkan.',
+            ], 404);
+        }
+
+        // Hapus file surat dari storage jika ada
+        if ($booking->surat) {
+            \Storage::disk('public')->delete($booking->surat);
+        }
+
+        // Hapus relasi booking_rooms
+        \App\Models\BookingRoom::where('booking_id', $booking->booking_id)->delete();
+
+        // Hapus data kegiatan jika ada
+        if ($booking->kegiatan_id) {
+            \App\Models\Kegiatan::find($booking->kegiatan_id)?->delete();
+        }
+
+        $booking->delete();
+
+        return response()->json(['success' => true, 'message' => 'Booking berhasil dibatalkan.']);
+    }
 }
