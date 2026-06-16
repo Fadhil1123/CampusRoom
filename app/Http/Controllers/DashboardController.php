@@ -9,13 +9,14 @@ use App\Models\Kegiatan;
 
 class DashboardController extends Controller
 {
+    // =====================================
     // DASHBOARD MAHASISWA
+    // =====================================
 
     public function userDashboard()
     {
         $userId = session('user')->user_id;
 
-        // Stat cards — spesifik milik user yang login
         $bookingAktif = Booking::where('user_id', $userId)
             ->whereIn('status', ['approved', 'pending'])
             ->whereDate('tanggal', '>=', now()->toDateString())
@@ -33,7 +34,6 @@ class DashboardController extends Controller
             ->where('status', 'rejected')
             ->count();
 
-        // Jadwal mendatang — booking milik user ke depan (approved & pending)
         $jadwalMendatang = Booking::where('user_id', $userId)
             ->whereIn('status', ['approved', 'pending'])
             ->whereDate('tanggal', '>=', now()->toDateString())
@@ -43,7 +43,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Rekomendasi ruangan — yang statusnya tersedia
         $rekomendasiRuangan = Room::where('status', 'tersedia')
             ->take(4)
             ->get();
@@ -58,6 +57,10 @@ class DashboardController extends Controller
         ));
     }
 
+    // =====================================
+    // JADWAL SAYA (halaman jadwal mendatang)
+    // =====================================
+
     public function jadwalSaya()
     {
         $userId = session('user')->user_id;
@@ -70,10 +73,10 @@ class DashboardController extends Controller
             ->orderBy('jam_mulai', 'asc')
             ->get();
 
-        $jadwalTerdekat = $jadwalSaya->first();
-        $jumlahJadwal = $jadwalSaya->count();
+        $jadwalTerdekat  = $jadwalSaya->first();
+        $jumlahJadwal    = $jadwalSaya->count();
         $jumlahDisetujui = $jadwalSaya->where('status', 'approved')->count();
-        $jumlahMenunggu = $jadwalSaya->where('status', 'pending')->count();
+        $jumlahMenunggu  = $jadwalSaya->where('status', 'pending')->count();
 
         return view('bookings.jadwal', compact(
             'jadwalSaya',
@@ -84,18 +87,20 @@ class DashboardController extends Controller
         ));
     }
 
+    // =====================================
     // DASHBOARD ADMIN
+    // =====================================
 
     public function adminDashboard()
     {
-        $totalUser         = User::count();
-        $totalBooking      = Booking::count();
-        $pendingBooking    = Booking::where('status', 'pending')->count();
-        $approvedBooking   = Booking::where('status', 'approved')->count();
-        $rejectedBooking   = Booking::where('status', 'rejected')->count();
-        $totalRoom         = Room::count();
-        $totalKegiatan     = Kegiatan::count();
-        $totalPerkuliahan  = Booking::where('jenis', 'perkuliahan')->count();
+        $totalUser            = User::count();
+        $totalBooking         = Booking::count();
+        $pendingBooking       = Booking::where('status', 'pending')->count();
+        $approvedBooking      = Booking::where('status', 'approved')->count();
+        $rejectedBooking      = Booking::where('status', 'rejected')->count();
+        $totalRoom            = Room::count();
+        $totalKegiatan        = Kegiatan::count();
+        $totalPerkuliahan     = Booking::where('jenis', 'perkuliahan')->count();
         $totalBookingKegiatan = Booking::where('jenis', 'kegiatan')->count();
 
         return view('dashboard.admin', compact(
@@ -109,11 +114,5 @@ class DashboardController extends Controller
             'totalPerkuliahan',
             'totalBookingKegiatan'
         ));
-    }
-
-    // Method lama (bisa dihapus setelah migrasi selesai)
-    public function index()
-    {
-        return $this->userDashboard();
     }
 }

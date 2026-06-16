@@ -27,42 +27,42 @@ Route::middleware('auth.custom')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'userDashboard']);
 
-    // Rooms — index & detail bisa diakses mahasiswa
+    // Rooms
     Route::get('/rooms',      [RoomController::class, 'index']);
     Route::get('/rooms/{id}', [RoomController::class, 'show']);
 
-    // Halaman pilih tipe booking (perkuliahan / kegiatan)
-    Route::get('/booking', function () {
-        return view('bookings.pilih');
-    });
+    // Pilih tipe booking
+    Route::get('/booking', fn() => view('bookings.pilih'));
 
     // ===== BOOKING PERKULIAHAN: STEP 1 - 2 - 3 =====
-    Route::get('/booking/perkuliahan',             [BookingController::class, 'createPerkuliahan']);          // STEP 1: form
-    Route::post('/booking/perkuliahan/konfirmasi', [BookingController::class, 'konfirmasiPerkuliahan']);       // STEP 1 -> validasi -> simpan session
-    Route::get('/booking/perkuliahan/konfirmasi',  [BookingController::class, 'showKonfirmasiPerkuliahan']);   // STEP 2: tampil konfirmasi
-    Route::post('/booking/perkuliahan/store',      [BookingController::class, 'storePerkuliahan']);           // STEP 2 -> simpan DB
-    Route::get('/booking/perkuliahan/selesai',     [BookingController::class, 'selesaiPerkuliahan']);          // STEP 3: selesai
+    Route::get('/booking/perkuliahan',             [BookingController::class, 'createPerkuliahan']);
+    Route::post('/booking/perkuliahan/konfirmasi', [BookingController::class, 'konfirmasiPerkuliahan']);
+    Route::get('/booking/perkuliahan/konfirmasi',  [BookingController::class, 'showKonfirmasiPerkuliahan']);
+    Route::post('/booking/perkuliahan/store',      [BookingController::class, 'storePerkuliahan']);
+    Route::get('/booking/perkuliahan/selesai',     [BookingController::class, 'selesaiPerkuliahan']);
 
     // ===== BOOKING KEGIATAN: STEP 1 - 2 - 3 (MULTI-ROOM) =====
-    Route::get('/booking/kegiatan',             [BookingController::class, 'createKegiatan']);          // STEP 1: form
-    Route::post('/booking/kegiatan/konfirmasi', [BookingController::class, 'konfirmasiKegiatan']);       // STEP 1 -> validasi multi-room+upload temp -> session
-    Route::get('/booking/kegiatan/konfirmasi',  [BookingController::class, 'showKonfirmasiKegiatan']);   // STEP 2: tampil konfirmasi
-    Route::post('/booking/kegiatan/store',      [BookingController::class, 'storeKegiatan']);           // STEP 2 -> simpan DB (multi booking_rooms)
-    Route::get('/booking/kegiatan/selesai',     [BookingController::class, 'selesaiKegiatan']);          // STEP 3: selesai
-    Route::post('/booking/kegiatan/batal',      [BookingController::class, 'batalKegiatan']);           // batal dari step 2
+    Route::get('/booking/kegiatan',             [BookingController::class, 'createKegiatan']);
+    Route::post('/booking/kegiatan/konfirmasi', [BookingController::class, 'konfirmasiKegiatan']);
+    Route::get('/booking/kegiatan/konfirmasi',  [BookingController::class, 'showKonfirmasiKegiatan']);
+    Route::post('/booking/kegiatan/store',      [BookingController::class, 'storeKegiatan']);
+    Route::get('/booking/kegiatan/selesai',     [BookingController::class, 'selesaiKegiatan']);
+    Route::post('/booking/kegiatan/batal',      [BookingController::class, 'batalKegiatan']);
 
     // Cek ketersediaan realtime (AJAX)
-    Route::post('/booking/cek-ketersediaan',       [BookingController::class, 'cekKetersediaan']);       // single room (perkuliahan)
-    Route::post('/booking/cek-ketersediaan-multi', [BookingController::class, 'cekKetersediaanMulti']);   // multi room (kegiatan)
+    Route::post('/booking/cek-ketersediaan',       [BookingController::class, 'cekKetersediaan']);       // single room
+    Route::post('/booking/cek-ketersediaan-multi', [BookingController::class, 'cekKetersediaanMulti']);   // multi room
 
     // Download template surat
     Route::get('/booking/download-template', [BookingController::class, 'downloadTemplate']);
 
-    // Riwayat
-    Route::get('/booking/history',            [BookingController::class, 'myBookings']);
+    // Riwayat & detail
+    Route::get('/booking/history',              [BookingController::class, 'myBookings']);
+    Route::get('/booking/detail/{id}',          [BookingController::class, 'detailBooking']);
+    Route::post('/booking/{id}/batal',          [BookingController::class, 'batalkanBookingUser']);
 
-    // Jadwal Saya
-    Route::get('/jadwal-saya',                [DashboardController::class, 'jadwalSaya']);
+    // ✅ FIX: Jadwal Saya — route yang sebelumnya belum ada
+    Route::get('/jadwal-saya',                  [DashboardController::class, 'jadwalSaya']);
 
 });
 
@@ -72,28 +72,27 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin', fn() => 'HALAMAN ADMIN');
     Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard']);
 
-    // CRUD room — hanya admin
-    Route::get('/rooms/create',        [RoomController::class, 'create']);
-    Route::post('/rooms/store',        [RoomController::class, 'store']);
-    Route::get('/rooms/edit/{id}',     [RoomController::class, 'edit']);
-    Route::put('/rooms/update/{id}',   [RoomController::class, 'update']);
-    Route::get('/rooms/delete/{id}',   [RoomController::class, 'destroy']);
+    Route::get('/rooms/create',       [RoomController::class, 'create']);
+    Route::post('/rooms/store',       [RoomController::class, 'store']);
+    Route::get('/rooms/edit/{id}',    [RoomController::class, 'edit']);
+    Route::put('/rooms/update/{id}',  [RoomController::class, 'update']);
+    Route::get('/rooms/delete/{id}',  [RoomController::class, 'destroy']);
 
-    Route::get('/schedules',              [ScheduleController::class, 'index']);
-    Route::get('/schedules/create',       [ScheduleController::class, 'create']);
-    Route::post('/schedules/store',       [ScheduleController::class, 'store']);
-    Route::get('/schedules/edit/{id}',    [ScheduleController::class, 'edit']);
-    Route::put('/schedules/update/{id}',  [ScheduleController::class, 'update']);
-    Route::get('/schedules/delete/{id}',  [ScheduleController::class, 'destroy']);
+    Route::get('/schedules',             [ScheduleController::class, 'index']);
+    Route::get('/schedules/create',      [ScheduleController::class, 'create']);
+    Route::post('/schedules/store',      [ScheduleController::class, 'store']);
+    Route::get('/schedules/edit/{id}',   [ScheduleController::class, 'edit']);
+    Route::put('/schedules/update/{id}', [ScheduleController::class, 'update']);
+    Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy']);
 
-    Route::get('/admin/bookings',                      [BookingController::class, 'pendingBookings']);
-    Route::get('/admin/bookings/{id}/approve',         [BookingController::class, 'approveBooking']);
-    Route::get('/admin/bookings/{id}/reject',          [BookingController::class, 'rejectBooking']);
-    Route::get('/admin/all-bookings',                  [BookingController::class, 'allBookings']);
+    Route::get('/admin/bookings',              [BookingController::class, 'pendingBookings']);
+    Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
+    Route::get('/admin/bookings/{id}/reject',  [BookingController::class, 'rejectBooking']);
+    Route::get('/admin/all-bookings',          [BookingController::class, 'allBookings']);
 
-    Route::get('/admin/kegiatan',                      [KegiatanController::class, 'index']);
-    Route::get('/admin/kegiatan/edit/{id}',            [KegiatanController::class, 'edit']);
-    Route::put('/admin/kegiatan/update/{id}',          [KegiatanController::class, 'update']);
-    Route::get('/admin/kegiatan/delete/{id}',          [KegiatanController::class, 'destroy']);
+    Route::get('/admin/kegiatan',              [KegiatanController::class, 'index']);
+    Route::get('/admin/kegiatan/edit/{id}',    [KegiatanController::class, 'edit']);
+    Route::put('/admin/kegiatan/update/{id}',  [KegiatanController::class, 'update']);
+    Route::get('/admin/kegiatan/delete/{id}',  [KegiatanController::class, 'destroy']);
 
 });
