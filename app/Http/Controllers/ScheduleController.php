@@ -8,95 +8,176 @@ use App\Models\Room;
 
 class ScheduleController extends Controller
 {
-    // Menampilkan semua schedule
-    public function index()
-    {
-        $schedules = Schedule::with('room')->get();
+    // =====================================
+    // INDEX - list semua jadwal
+    // =====================================
 
-        return view('schedules.index', compact('schedules'));
+    public function index(Request $request)
+    {
+        $query = Schedule::with('room');
+
+        // Filter pencarian
+        if ($request->filled('search')) {
+            $q = $request->search;
+            $query->where(function($qb) use ($q) {
+                $qb->where('mata_kuliah', 'like', "%$q%")
+                   ->orWhere('dosen', 'like', "%$q%");
+            });
+        }
+
+        // Filter ruangan
+        if ($request->filled('room_id')) {
+            $query->where('room_id', $request->room_id);
+        }
+
+        // Filter hari
+        if ($request->filled('hari')) {
+            $query->where('hari', $request->hari);
+        }
+
+        $schedules = $query->orderBy('hari')->orderBy('jam_mulai')->paginate(10);
+        $rooms     = Room::all();
+
+        return view('schedules.index', compact('schedules', 'rooms'));
     }
 
-    // Form tambah schedule
-    public function create()
-    {
-        $rooms = Room::all();
+    // =====================================
+    // STORE - simpan jadwal baru
+    // =====================================
 
-        return view('schedules.create', compact('rooms'));
-    }
-
-    // Simpan schedule
     public function store(Request $request)
     {
-        Schedule::create([
-            'room_id' => $request->room_id,
-            'mata_kuliah' => $request->mata_kuliah,
-            'dosen' => $request->dosen,
-            'hari' => $request->hari,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
+        // ✅ FIX: validate dulu sebelum create
+        $request->validate([
+            'room_id'    => 'required|exists:rooms,room_id',
+            'mata_kuliah'=> 'required|string|max:100',
+            'dosen'      => 'required|string|max:100',
+            'hari'       => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat',
+            'jam_mulai'  => 'required',
+            'jam_selesai'=> 'required|after:jam_mulai',
         ]);
 
-        $request->validate([
+        // Cek bentrok jadwal di ruangan + hari yang sama
+        $bentrok = Schedule::where('room_id', $request->room_id)
+            ->where('hari', $request->hari)
+            ->where(function ($q) use ($request) {
+                $q->where('jam_mulai', '<', $request->jam_selesai)
+                  ->where('jam_selesai', '>', $request->jam_mulai);
+            })
+            ->exists();
 
-        'room_id' => 'required',
+        if ($bentrok) {
+            return back()
+                ->withInput()
+                ->with('error', 'Jadwal bentrok! Ruangan sudah dipakai pada hari dan jam tersebut.');
+        }
 
-        'hari' => 'required',
+        Schedule::create([
+            'room_id'    => $request->room_id,
+            'mata_kuliah'=> $request->mata_kuliah,
+            'dosen'      => $request->dosen,
+            'hari'       => $request->hari,
+            'jam_mulai'  => $request->jam_mulai,
+            'jam_selesai'=> $request->jam_selesai,
+        ]);
 
-        'jam_mulai' => 'required',
-
-        'jam_selesai' => 'required|after:jam_mulai',
-
-    ]);
-
-        return redirect('/schedules');
+        return redirect('/schedules')->with('success', 'Jadwal berhasil ditambahkan!');
     }
 
-    // Form edit
-    public function edit($id)
-    {
-        $schedule = Schedule::findOrFail($id);
+    // =====================================
+    // UPDATE - ubah jadwal
+    // =====================================
 
-        $rooms = Room::all();
-
-        return view('schedules.edit', compact('schedule', 'rooms'));
-    }
-
-    // Update schedule
     public function update(Request $request, $id)
     {
         $schedule = Schedule::findOrFail($id);
 
-        $schedule->update([
-            'room_id' => $request->room_id,
-            'mata_kuliah' => $request->mata_kuliah,
-            'dosen' => $request->dosen,
-            'hari' => $request->hari,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
+        $request->validate([
+            'room_id'    => 'required|exists:rooms,room_id',
+            'mata_kuliah'=> 'required|string|max:100',
+            'dosen'      => 'required|string|max:100',
+            'hari'       => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat',
+            'jam_mulai'  => 'required',
+            'jam_selesai'=> 'required|after:jam_mulai',
         ]);
 
-        $request->validate([
+        // Cek bentrok — kecualikan diri sendiri
+        $bentrok = Schedule::where('room_id', $request->room_id)
+            ->where('hari', $request->hari)
+            ->where('schedule_id', '!=', $id)
+            ->where(function ($q) use ($request) {
+                $q->where('jam_mulai', '<', $request->jam_selesai)
+                  ->where('jam_selesai', '>', $request->jam_mulai);
+            })
+            ->exists();
 
-        'room_id' => 'required',
+        if ($bentrok) {
+            return back()
+                ->withInput()
+                ->with('error', 'Jadwal bentrok! Ruangan sudah dipakai pada hari dan jam tersebut.');
+        }
 
-        'hari' => 'required',
+        $schedule->update([
+            'room_id'    => $request->room_id,
+            'mata_kuliah'=> $request->mata_kuliah,
+            'dosen'      => $request->dosen,
+            'hari'       => $request->hari,
+            'jam_mulai'  => $request->jam_mulai,
+            'jam_selesai'=> $request->jam_selesai,
+        ]);
 
-        'jam_mulai' => 'required',
-
-        'jam_selesai' => 'required|after:jam_mulai',
-
-    ]);
-
-        return redirect('/schedules');
+        return redirect('/schedules')->with('success', 'Jadwal berhasil diperbarui!');
     }
 
-    // Hapus schedule
+    // =====================================
+    // DESTROY - hapus jadwal
+    // =====================================
+
     public function destroy($id)
     {
+        Schedule::findOrFail($id)->delete();
+        return redirect('/schedules')->with('success', 'Jadwal berhasil dihapus!');
+    }
+
+    // =====================================
+    // CEK BENTROK (AJAX - dari modal tambah)
+    // =====================================
+
+    public function cekBentrok(Request $request)
+    {
+        $bentrok = Schedule::where('room_id', $request->room_id)
+            ->where('hari', $request->hari)
+            ->when($request->filled('exclude_id'), fn($q) => $q->where('schedule_id', '!=', $request->exclude_id))
+            ->where(function ($q) use ($request) {
+                $q->where('jam_mulai', '<', $request->jam_selesai)
+                  ->where('jam_selesai', '>', $request->jam_mulai);
+            })
+            ->first();
+
+        if ($bentrok) {
+            return response()->json([
+                'status'  => 'conflict',
+                'message' => 'Bentrok dengan ' . $bentrok->mata_kuliah . ' (' . substr($bentrok->jam_mulai,0,5) . '-' . substr($bentrok->jam_selesai,0,5) . ')',
+            ]);
+        }
+
+        return response()->json(['status' => 'ok', 'message' => 'Tidak ada bentrok.']);
+    }
+
+    // =====================================
+    // CREATE & EDIT (form terpisah — fallback jika modal gagal)
+    // =====================================
+
+    public function create()
+    {
+        $rooms = Room::all();
+        return view('schedules.create', compact('rooms'));
+    }
+
+    public function edit($id)
+    {
         $schedule = Schedule::findOrFail($id);
-
-        $schedule->delete();
-
-        return redirect('/schedules');
+        $rooms    = Room::all();
+        return view('schedules.edit', compact('schedule', 'rooms'));
     }
 }
