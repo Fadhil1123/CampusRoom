@@ -14,6 +14,7 @@ class RoomController extends Controller
     {
         $query = Room::query();
 
+        // Filter kapasitas (mahasiswa)
         if ($request->filled('kapasitas')) {
             $kap = $request->kapasitas;
             if ($kap === 'small')  $query->where('kapasitas', '<=', 20);
@@ -21,7 +22,27 @@ class RoomController extends Controller
             if ($kap === 'large')  $query->where('kapasitas', '>', 50);
         }
 
-        $rooms = $query->orderBy('room_id')->get();
+        // Filter status (admin)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Search nama ruangan (admin)
+        if ($request->filled('search')) {
+            $query->where('nama_ruangan', 'like', '%' . $request->search . '%');
+        }
+
+        $query->orderBy('room_id');
+
+        // Admin: paginate 10, tampilkan view admin
+        $user = session('user');
+        if ($user && $user->role === 'admin') {
+            $rooms = $query->paginate(10)->withQueryString();
+            return view('admin.rooms.index', compact('rooms'));
+        }
+
+        // Mahasiswa: get all, tampilkan view mahasiswa
+        $rooms = $query->get();
         return view('rooms.index', compact('rooms'));
     }
 
