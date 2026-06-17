@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Booking;
 use App\Models\Room;
 use App\Models\BookingRoom;
@@ -11,6 +12,20 @@ use App\Models\Kegiatan;
 
 class BookingController extends Controller
 {
+    // =====================================
+    // HELPER: konversi nama hari Inggris -> Indonesia
+    // =====================================
+
+    private function convertHari(string $tanggal): ?string
+    {
+        $map = [
+            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu',
+        ];
+
+        return $map[date('l', strtotime($tanggal))] ?? null;
+    }
+
     // =====================================
     // FORM BOOKING PERKULIAHAN
     // =====================================
@@ -35,14 +50,14 @@ class BookingController extends Controller
     }
 
     // =====================================
-    // CEK KETERSEDIAAN (AJAX realtime)
+    // CEK KETERSEDIAAN (AJAX realtime) - single room
     // =====================================
 
     public function cekKetersediaan(Request $request)
     {
-        $roomId    = $request->room_id;
-        $tanggal   = $request->tanggal;
-        $jamMulai  = $request->jam_mulai;
+        $roomId     = $request->room_id;
+        $tanggal    = $request->tanggal;
+        $jamMulai   = $request->jam_mulai;
         $jamSelesai = $request->jam_selesai;
 
         if (!$roomId || !$tanggal || !$jamMulai || !$jamSelesai) {
@@ -54,13 +69,7 @@ class BookingController extends Controller
             return response()->json(['status' => 'not_found']);
         }
 
-        // Konversi hari
-        $hariInggris  = date('l', strtotime($tanggal));
-        $convertHari  = [
-            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu',
-        ];
-        $hariIndonesia = $convertHari[$hariInggris] ?? null;
+        $hariIndonesia = $this->convertHari($tanggal);
 
         // Cek bentrok schedule tetap
         $bentrokSchedule = Schedule::where('room_id', $roomId)
@@ -73,9 +82,9 @@ class BookingController extends Controller
 
         if ($bentrokSchedule) {
             return response()->json([
-                'status'   => 'conflict',
-                'message'  => 'Bentrok dengan jadwal kuliah',
-                'detail'   => $bentrokSchedule->mata_kuliah . ' (' . substr($bentrokSchedule->jam_mulai, 0, 5) . ' - ' . substr($bentrokSchedule->jam_selesai, 0, 5) . ')',
+                'status'  => 'conflict',
+                'message' => 'Bentrok dengan jadwal kuliah',
+                'detail'  => $bentrokSchedule->mata_kuliah . ' (' . substr($bentrokSchedule->jam_mulai, 0, 5) . ' - ' . substr($bentrokSchedule->jam_selesai, 0, 5) . ')',
             ]);
         }
 
@@ -102,11 +111,97 @@ class BookingController extends Controller
     }
 
     // =====================================
-    // STEP 2: PREVIEW / KONFIRMASI BOOKING PERKULIAHAN
-    // (Form step 1 submit ke sini sebelum disimpan ke DB)
+    // CEK KETERSEDIAAN (AJAX realtime) - multi room, dipakai form Kegiatan
     // =====================================
 
-    public function previewPerkuliahan(Request $request)
+    public function cekKetersediaanMulti(Request $request)
+    {
+        $roomIds    = $request->room_ids;
+        $tanggal    = $request->tanggal;
+        $jamMulai   = $request->jam_mulai;
+        $jamSelesai = $request->jam_selesai;
+
+        if (!$roomIds || !is_array($roomIds) || count($roomIds) === 0 || !$tanggal || !$jamMulai || !$jamSelesai) {
+            return response()->json(['status' => 'incomplete']);
+        }
+
+        $hariIndonesia = $this->convertHari($tanggal);
+        $hasil         = [];
+
+        foreach ($roomIds as $roomId) {
+            $room = Room::find($roomId);
+            if (!$room) {
+                continue;
+            }
+
+            // Ruangan sedang non-aktif (maintenance dll)
+            if ($room->status !== 'tersedia') {
+                $hasil[] = [
+                    'room_id' => $room->room_id,
+                    'nama'    => $room->nama_ruangan,
+                    'status'  => 'conflict',
+                    'detail'  => 'Ruangan sedang tidak tersedia',
+                ];
+                continue;
+            }
+
+            // Bentrok jadwal kuliah tetap
+            $bentrokSchedule = Schedule::where('room_id', $roomId)
+                ->where('hari', $hariIndonesia)
+                ->where(function ($q) use ($jamMulai, $jamSelesai) {
+                    $q->where('jam_mulai', '<', $jamSelesai)
+                      ->where('jam_selesai', '>', $jamMulai);
+                })
+                ->first();
+
+            if ($bentrokSchedule) {
+                $hasil[] = [
+                    'room_id' => $room->room_id,
+                    'nama'    => $room->nama_ruangan,
+                    'status'  => 'conflict',
+                    'detail'  => $bentrokSchedule->mata_kuliah . ' (' . substr($bentrokSchedule->jam_mulai, 0, 5) . '-' . substr($bentrokSchedule->jam_selesai, 0, 5) . ')',
+                ];
+                continue;
+            }
+
+            // Bentrok booking lain (approved / pending)
+            $bentrokBooking = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
+                ->where('booking_rooms.room_id', $roomId)
+                ->whereIn('bookings.status', ['approved', 'pending'])
+                ->whereDate('bookings.tanggal', $tanggal)
+                ->where(function ($q) use ($jamMulai, $jamSelesai) {
+                    $q->where('bookings.jam_mulai', '<', $jamSelesai)
+                      ->where('bookings.jam_selesai', '>', $jamMulai);
+                })
+                ->first();
+
+            if ($bentrokBooking) {
+                $hasil[] = [
+                    'room_id' => $room->room_id,
+                    'nama'    => $room->nama_ruangan,
+                    'status'  => 'conflict',
+                    'detail'  => substr($bentrokBooking->jam_mulai, 0, 5) . ' - ' . substr($bentrokBooking->jam_selesai, 0, 5),
+                ];
+                continue;
+            }
+
+            $hasil[] = [
+                'room_id' => $room->room_id,
+                'nama'    => $room->nama_ruangan,
+                'status'  => 'available',
+                'detail'  => null,
+            ];
+        }
+
+        return response()->json(['status' => 'ok', 'rooms' => $hasil]);
+    }
+
+    // =====================================
+    // STEP 2: KONFIRMASI BOOKING PERKULIAHAN
+    // (nama function disamakan dengan route 'konfirmasiPerkuliahan')
+    // =====================================
+
+    public function konfirmasiPerkuliahan(Request $request)
     {
         $request->validate([
             'room_id'     => 'required',
@@ -141,20 +236,28 @@ class BookingController extends Controller
             . date('Y', $timestamp);
 
         // Hitung durasi (jam)
-        $mulai   = strtotime($request->jam_mulai);
-        $selesai = strtotime($request->jam_selesai);
+        $mulai     = strtotime($request->jam_mulai);
+        $selesai   = strtotime($request->jam_selesai);
         $durasiJam = max(0, round(($selesai - $mulai) / 3600, 1));
 
         return view('bookings.perkuliahan_konfirmasi', [
-            'room'             => $room,
-            'mata_kuliah'      => $request->mata_kuliah,
-            'dosen'            => $request->dosen,
-            'tanggal'          => $request->tanggal,
-            'tanggal_formatted'=> $tanggalFormatted,
-            'jam_mulai'        => $request->jam_mulai,
-            'jam_selesai'      => $request->jam_selesai,
-            'durasi'           => $durasiJam,
+            'room'              => $room,
+            'mata_kuliah'       => $request->mata_kuliah,
+            'dosen'             => $request->dosen,
+            'tanggal'           => $request->tanggal,
+            'tanggal_formatted' => $tanggalFormatted,
+            'jam_mulai'         => $request->jam_mulai,
+            'jam_selesai'       => $request->jam_selesai,
+            'durasi'            => $durasiJam,
         ]);
+    }
+
+    // Halaman konfirmasi diakses lewat GET (mis. refresh halaman).
+    // Karena data perkuliahan dikirim lewat hidden input (bukan session),
+    // tidak ada data yang bisa ditampilkan lagi -> balik ke step 1.
+    public function showKonfirmasiPerkuliahan()
+    {
+        return redirect('/booking/perkuliahan');
     }
 
     // =====================================
@@ -170,12 +273,7 @@ class BookingController extends Controller
             'jam_selesai' => 'required',
         ]);
 
-        $hariInggris   = date('l', strtotime($request->tanggal));
-        $convertHari   = [
-            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu',
-        ];
-        $hariIndonesia = $convertHari[$hariInggris];
+        $hariIndonesia = $this->convertHari($request->tanggal);
 
         $bentrokSchedule = Schedule::where('room_id', $request->room_id)
             ->where('hari', $hariIndonesia)
@@ -221,16 +319,29 @@ class BookingController extends Controller
             'room_id'    => $request->room_id,
         ]);
 
-        return redirect('/booking/perkuliahan/berhasil/' . $booking->booking_id);
+        // Simpan id booking supaya bisa diambil lagi di halaman "selesai"
+        session(['last_booking_id_perkuliahan' => $booking->booking_id]);
+
+        return redirect('/booking/perkuliahan/selesai');
     }
 
     // =====================================
-    // STEP 3 (TAMPILAN): BOOKING BERHASIL
+    // STEP 3 (TAMPILAN): BOOKING PERKULIAHAN SELESAI
     // =====================================
 
-    public function berhasilPerkuliahan($id)
+    public function selesaiPerkuliahan()
     {
-        $booking = Booking::with('rooms')->findOrFail($id);
+        $id = session('last_booking_id_perkuliahan');
+
+        if (!$id) {
+            return redirect('/booking/perkuliahan');
+        }
+
+        $booking = Booking::with('rooms')->find($id);
+
+        if (!$booking) {
+            return redirect('/booking/perkuliahan');
+        }
 
         return view('bookings.perkuliahan_berhasil', compact('booking'));
     }
@@ -239,37 +350,99 @@ class BookingController extends Controller
     // FORM BOOKING KEGIATAN
     // =====================================
 
-    public function createKegiatan()
+    public function createKegiatan(Request $request)
     {
-        $rooms = Room::all();
-        return view('bookings.kegiatan', compact('rooms'));
+        $rooms          = Room::all();
+        $selectedRoomId = $request->filled('room_id') ? (int) $request->room_id : null;
+        $minTanggal     = now()->addDays(2)->format('Y-m-d');
+
+        return view('bookings.kegiatan', compact('rooms', 'selectedRoomId', 'minTanggal'));
     }
 
     // =====================================
-    // SIMPAN BOOKING KEGIATAN
+    // STEP 2: KONFIRMASI BOOKING KEGIATAN (multi-room + upload surat)
+    // =====================================
+
+    public function konfirmasiKegiatan(Request $request)
+    {
+        $request->validate([
+            'room_ids'          => 'required|array|min:1',
+            'nama_kegiatan'     => 'required|string',
+            'penyelenggara'     => 'required|string',
+            'tanggal'           => 'required|date',
+            'tanggal_selesai'   => 'required|date|after_or_equal:tanggal',
+            'jam_mulai'         => 'required',
+            'jam_selesai'       => 'required',
+            'perkiraan_peserta' => 'required|integer|min:1',
+            'surat'             => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        // Aturan H-2
+        $minimalTanggal = strtotime('+2 days', strtotime(date('Y-m-d')));
+        if (strtotime($request->tanggal) < $minimalTanggal) {
+            return back()->with('error', 'Booking kegiatan minimal H-2!')->withInput();
+        }
+
+        $roomIds = $request->room_ids;
+        $rooms   = Room::whereIn('room_id', $roomIds)->get();
+
+        if ($rooms->count() !== count($roomIds)) {
+            return back()->with('error', 'Salah satu ruangan yang dipilih tidak ditemukan.')->withInput();
+        }
+
+        // File surat langsung disimpan, path-nya ditaruh di draft session
+        // supaya tidak hilang saat user pindah ke halaman konfirmasi.
+        $pathSurat = $request->file('surat')->store('surat', 'public');
+
+        $draft = [
+            'room_ids'          => array_map('intval', $roomIds),
+            'nama_kegiatan'     => $request->nama_kegiatan,
+            'deskripsi'         => $request->deskripsi,
+            'penyelenggara'     => $request->penyelenggara,
+            'tanggal'           => $request->tanggal,
+            'tanggal_selesai'   => $request->tanggal_selesai,
+            'jam_mulai'         => $request->jam_mulai,
+            'jam_selesai'       => $request->jam_selesai,
+            'perkiraan_peserta' => $request->perkiraan_peserta,
+            'surat_path'        => $pathSurat,
+            'surat_nama_asli'   => $request->file('surat')->getClientOriginalName(),
+        ];
+
+        session(['kegiatan_draft' => $draft]);
+
+        return view('bookings.konfirmasi-kegiatan', [
+            'draft' => $draft,
+            'rooms' => $rooms,
+        ]);
+    }
+
+    // Diakses lewat GET, misalnya saat halaman konfirmasi di-refresh.
+    public function showKonfirmasiKegiatan()
+    {
+        $draft = session('kegiatan_draft');
+
+        if (!$draft) {
+            return redirect('/booking/kegiatan');
+        }
+
+        $rooms = Room::whereIn('room_id', $draft['room_ids'])->get();
+
+        return view('bookings.konfirmasi-kegiatan', compact('draft', 'rooms'));
+    }
+
+    // =====================================
+    // SIMPAN BOOKING KEGIATAN (final, ambil data dari draft session)
     // =====================================
 
     public function storeKegiatan(Request $request)
     {
-        // =====================================
-        // ATURAN H-2 (logic asli, tidak diubah)
-        // =====================================
-        $tanggalBooking = strtotime($request->tanggal);
-        $minimalTanggal = strtotime('+2 days');
+        $draft = session('kegiatan_draft');
 
-        if ($tanggalBooking < $minimalTanggal) {
-            return back()->with('error', 'Booking kegiatan minimal H-2!');
+        if (!$draft) {
+            return redirect('/booking/kegiatan')->with('error', 'Data booking tidak ditemukan, silakan isi ulang form.');
         }
 
-        if (!$request->hasFile('surat')) {
-            return back()->with('error', 'File surat wajib diupload!');
-        }
-
-        if (!$request->has('room_id') || count($request->room_id) === 0) {
-            return back()->with('error', 'Pilih minimal 1 ruangan!');
-        }
-
-        $roomIds = $request->room_id;
+        $roomIds = $draft['room_ids'];
 
         // =====================================
         // LOGIC MULTI-ROOM BOOKING
@@ -280,25 +453,21 @@ class BookingController extends Controller
         foreach ($roomIds as $roomId) {
             $room = Room::find($roomId);
 
-            // Ruangan tidak ditemukan
             if (!$room) {
                 return back()->with('error', 'Salah satu ruangan yang dipilih tidak ditemukan.');
             }
 
-            // Ruangan sedang tidak tersedia (maintenance, dll)
             if ($room->status !== 'tersedia') {
                 return back()->with('error', "Ruangan {$room->nama_ruangan} sedang tidak tersedia. Booking dibatalkan.");
             }
 
-            // Bentrok dengan booking lain yang sudah approved ATAU masih pending
-            // pada ruangan & rentang waktu yang sama
             $bentrokBooking = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
                 ->where('booking_rooms.room_id', $roomId)
                 ->whereIn('bookings.status', ['approved', 'pending'])
-                ->whereDate('bookings.tanggal', $request->tanggal)
-                ->where(function ($q) use ($request) {
-                    $q->where('bookings.jam_mulai', '<', $request->jam_selesai)
-                      ->where('bookings.jam_selesai', '>', $request->jam_mulai);
+                ->whereDate('bookings.tanggal', $draft['tanggal'])
+                ->where(function ($q) use ($draft) {
+                    $q->where('bookings.jam_mulai', '<', $draft['jam_selesai'])
+                      ->where('bookings.jam_selesai', '>', $draft['jam_mulai']);
                 })
                 ->exists();
 
@@ -306,18 +475,13 @@ class BookingController extends Controller
                 return back()->with('error', "Ruangan {$room->nama_ruangan} sudah dibooking pada tanggal & jam tersebut. Booking dibatalkan.");
             }
 
-            // Bentrok dengan jadwal kuliah tetap pada hari & jam yang sama
-            $hariMap = [
-                'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
-                'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu',
-            ];
-            $hariIndonesia = $hariMap[date('l', strtotime($request->tanggal))] ?? null;
+            $hariIndonesia = $this->convertHari($draft['tanggal']);
 
             $bentrokSchedule = Schedule::where('room_id', $roomId)
                 ->where('hari', $hariIndonesia)
-                ->where(function ($q) use ($request) {
-                    $q->where('jam_mulai', '<', $request->jam_selesai)
-                      ->where('jam_selesai', '>', $request->jam_mulai);
+                ->where(function ($q) use ($draft) {
+                    $q->where('jam_mulai', '<', $draft['jam_selesai'])
+                      ->where('jam_selesai', '>', $draft['jam_mulai']);
                 })
                 ->exists();
 
@@ -328,25 +492,25 @@ class BookingController extends Controller
 
         // =====================================
         // SEMUA RUANGAN TERSEDIA & TIDAK BENTROK
-        // -> Simpan satu data booking + relasi booking_rooms
+        // -> Simpan satu data kegiatan + booking + relasi booking_rooms
         // =====================================
-        $pathSurat = $request->file('surat')->store('surat', 'public');
-
         $kegiatan = Kegiatan::create([
-            'nama_kegiatan' => $request->nama_kegiatan,
-            'deskripsi'     => $request->deskripsi,
-            'penyelenggara' => $request->penyelenggara,
+            'nama_kegiatan'     => $draft['nama_kegiatan'],
+            'deskripsi'         => $draft['deskripsi'],
+            'penyelenggara'     => $draft['penyelenggara'],
+            'tanggal_selesai'   => $draft['tanggal_selesai'],
+            'perkiraan_peserta' => $draft['perkiraan_peserta'],
         ]);
 
         $booking = Booking::create([
             'user_id'     => session('user')->user_id,
             'kegiatan_id' => $kegiatan->kegiatan_id,
-            'tanggal'     => $request->tanggal,
-            'jam_mulai'   => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
+            'tanggal'     => $draft['tanggal'],
+            'jam_mulai'   => $draft['jam_mulai'],
+            'jam_selesai' => $draft['jam_selesai'],
             'jenis'       => 'kegiatan',
             'status'      => 'pending', // menunggu approval admin
-            'surat'       => $pathSurat,
+            'surat'       => $draft['surat_path'],
             'approved_by' => null,
             'approved_at' => null,
         ]);
@@ -358,7 +522,54 @@ class BookingController extends Controller
             ]);
         }
 
-        return redirect('/dashboard')->with('success', 'Booking kegiatan berhasil, menunggu persetujuan!');
+        // Bersihkan draft, simpan id booking untuk halaman "selesai"
+        session()->forget('kegiatan_draft');
+        session(['last_kegiatan_booking_id' => $booking->booking_id]);
+
+        return redirect('/booking/kegiatan/selesai');
+    }
+
+    // =====================================
+    // STEP 3 (TAMPILAN): BOOKING KEGIATAN SELESAI / DIAJUKAN
+    // =====================================
+
+    public function selesaiKegiatan()
+    {
+        $id = session('last_kegiatan_booking_id');
+
+        if (!$id) {
+            return redirect('/dashboard');
+        }
+
+        $booking = Booking::with(['rooms', 'kegiatan'])->find($id);
+
+        if (!$booking) {
+            return redirect('/dashboard');
+        }
+
+        $done = [
+            'nama_kegiatan' => $booking->kegiatan->nama_kegiatan ?? null,
+        ];
+        $rooms = $booking->rooms;
+
+        return view('bookings.selesai-kegiatan', compact('done', 'rooms'));
+    }
+
+    // =====================================
+    // BATALKAN PENGAJUAN KEGIATAN (sebelum disimpan, dari halaman konfirmasi)
+    // =====================================
+
+    public function batalKegiatan()
+    {
+        $draft = session('kegiatan_draft');
+
+        if ($draft && !empty($draft['surat_path'])) {
+            Storage::disk('public')->delete($draft['surat_path']);
+        }
+
+        session()->forget('kegiatan_draft');
+
+        return redirect('/booking/kegiatan')->with('success', 'Pengajuan booking kegiatan dibatalkan.');
     }
 
     // =====================================
@@ -436,6 +647,49 @@ class BookingController extends Controller
     }
 
     // =====================================
+    // DETAIL BOOKING (user)
+    // =====================================
+
+    public function detailBooking($id)
+    {
+        $booking = Booking::with(['rooms', 'kegiatan'])->findOrFail($id);
+
+        $user = session('user');
+
+        // Hanya pemilik booking atau admin yang boleh lihat detailnya
+        if ($user->role !== 'admin' && $booking->user_id != $user->user_id) {
+            abort(403);
+        }
+
+        return view('bookings.detail', compact('booking'));
+    }
+
+    // =====================================
+    // BATALKAN BOOKING (user, dari halaman detail/riwayat - AJAX)
+    // =====================================
+
+    public function batalkanBookingUser($id)
+    {
+        $booking = Booking::find($id);
+        $user    = session('user');
+
+        if (!$booking || $booking->user_id != $user->user_id) {
+            return response()->json(['success' => false, 'message' => 'Booking tidak ditemukan.']);
+        }
+
+        if ($booking->status !== 'pending') {
+            return response()->json(['success' => false, 'message' => 'Hanya booking berstatus pending yang bisa dibatalkan.']);
+        }
+
+        // Tabel bookings hanya punya status pending/approved/rejected,
+        // jadi pembatalan oleh user disimpan sebagai 'rejected'.
+        $booking->status = 'rejected';
+        $booking->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    // =====================================
     // ALL BOOKINGS (admin)
     // =====================================
 
@@ -470,7 +724,7 @@ class BookingController extends Controller
         // Search nama user atau kode booking
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->whereHas('user', fn($u) => $u->where('nama', 'like', "%$search%"))
                   ->orWhere('booking_id', 'like', "%$search%");
             });
