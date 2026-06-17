@@ -37,7 +37,7 @@
     <div class="cr-bk-alert cr-bk-alert--success">✅ {{ session('success') }}</div>
     @endif
 
-    <form action="/booking/perkuliahan/preview" method="POST" id="formBooking">
+    <form action="/booking/perkuliahan/konfirmasi" method="POST" id="formBooking">
         @csrf
 
         {{-- ======== RUANGAN YANG DIPILIH ======== --}}
