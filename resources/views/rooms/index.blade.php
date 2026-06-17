@@ -11,8 +11,13 @@
         <span class="cr-dash-brand-pill__text">CampusRoom • v1.0 Admin</span>
     </div>
 
-    {{-- Page title --}}
-    <h1 class="cr-rl-page-title">Daftar Ruangan Kampus</h1>
+    {{-- ✅ FIX: page header row — title kiri, tombol admin kanan, sejajar dengan brand pill --}}
+    <div class="cr-rl-page-header">
+        <h1 class="cr-rl-page-title">Daftar Ruangan Kampus</h1>
+        @if(session('user') && session('user')->role === 'admin')
+        <a href="/rooms/create" class="cr-rl-btn-tambah">+ Tambah Ruangan</a>
+        @endif
+    </div>
 
     {{-- Filter bar --}}
     <div class="cr-rl-filterbar">

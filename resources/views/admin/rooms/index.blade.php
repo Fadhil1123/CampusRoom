@@ -266,7 +266,7 @@
 .cr-crud-content { 
     max-width: 1000px; 
     margin: 0 auto; 
-    padding: 0 36px;}
+    padding: 0 1px;}
 
 /* Flash */
 .cr-crud-flash {

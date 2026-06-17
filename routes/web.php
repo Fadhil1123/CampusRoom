@@ -78,12 +78,16 @@ Route::middleware('admin')->group(function () {
     Route::put('/rooms/update/{id}',  [RoomController::class, 'update']);
     Route::get('/rooms/delete/{id}',  [RoomController::class, 'destroy']);
 
-    Route::get('/schedules',             [ScheduleController::class, 'index']);
-    Route::get('/schedules/create',      [ScheduleController::class, 'create']);
-    Route::post('/schedules/store',      [ScheduleController::class, 'store']);
-    Route::get('/schedules/edit/{id}',   [ScheduleController::class, 'edit']);
-    Route::put('/schedules/update/{id}', [ScheduleController::class, 'update']);
-    Route::get('/schedules/delete/{id}', [ScheduleController::class, 'destroy']);
+    // ===== SCHEDULES (admin only) =====
+    Route::get('/schedules',               [ScheduleController::class, 'index']);
+    Route::get('/schedules/create',        [ScheduleController::class, 'create']);
+    Route::post('/schedules/store',        [ScheduleController::class, 'store']);
+    Route::get('/schedules/edit/{id}',     [ScheduleController::class, 'edit']);
+    Route::put('/schedules/update/{id}',   [ScheduleController::class, 'update']);
+    Route::delete('/schedules/delete/{id}',[ScheduleController::class, 'destroy']);
+
+    // ✅ TAMBAH: cek bentrok jadwal via AJAX (dari modal)
+    Route::post('/schedules/cek-bentrok',  [ScheduleController::class, 'cekBentrok']);
 
     Route::get('/admin/bookings',              [BookingController::class, 'pendingBookings']);
     Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
