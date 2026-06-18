@@ -576,11 +576,43 @@ class BookingController extends Controller
     // LIST BOOKING PENDING (admin)
     // =====================================
 
-    public function pendingBookings()
-    {
-        $bookings = Booking::where('status', 'pending')->get();
-        return view('admin.bookings.pending', compact('bookings'));
+    public function pendingBookings(Request $request)
+{
+    $query = Booking::where('status', 'pending')
+        ->with(['rooms', 'user', 'kegiatan'])
+        ->orderBy('booking_id', 'asc');
+
+    if ($request->filled('search')) {
+        $s = $request->search;
+        $query->where(function($q) use ($s) {
+            $q->whereHas('user', fn($u) => $u->where('nama', 'like', "%$s%"))
+              ->orWhere('booking_id', 'like', "%$s%");
+        });
     }
+
+    if ($request->filled('jenis'))
+        $query->where('jenis', $request->jenis);
+
+    if ($request->filled('dari'))
+        $query->whereDate('tanggal', '>=', $request->dari);
+
+    if ($request->filled('hingga'))
+        $query->whereDate('tanggal', '<=', $request->hingga);
+
+    if ($request->filled('room_id')) {
+        $query->whereHas('rooms', fn($q) =>
+            $q->where('rooms.room_id', $request->room_id));
+    }
+
+    $bookings = $query->get();
+    $totalPending = $bookings->count();
+    $rooms = Room::orderBy('nama_ruangan')->get();
+
+    return view(
+        'admin.bookings.pending',
+        compact('bookings', 'totalPending', 'rooms')
+    );
+}
 
     // =====================================
     // APPROVE BOOKING
