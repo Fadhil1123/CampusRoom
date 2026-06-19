@@ -92,6 +92,9 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/bookings',              [BookingController::class, 'pendingBookings']);
     Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
     Route::get('/admin/bookings/{id}/reject',  [BookingController::class, 'rejectBooking']);
+    Route::get('/admin/booking/detail/{id}',   [BookingController::class, 'adminDetailBooking']);
+    Route::post('/admin/bookings/{id}/edit-status', [BookingController::class, 'editStatus']);
+    Route::delete('/admin/booking/{id}/hapus', [BookingController::class, 'hapusBooking']);
     Route::get('/admin/all-bookings',          [BookingController::class, 'allBookings']);
 
     Route::get('/admin/kegiatan',              [KegiatanController::class, 'index']);

@@ -696,6 +696,14 @@ class BookingController extends Controller
         return view('bookings.detail', compact('booking'));
     }
 
+    // detail booking (admin)
+    public function adminDetailBooking($id)
+    {
+    $booking = Booking::with(['rooms', 'kegiatan', 'user'])->findOrFail($id);
+
+    return view('admin.bookings.detail', compact('booking'));
+    }
+
     // =====================================
     // BATALKAN BOOKING (user, dari halaman detail/riwayat - AJAX)
     // =====================================
@@ -773,5 +781,46 @@ class BookingController extends Controller
     {
         $path = public_path('template/template_surat_peminjaman.docx');
         return response()->download($path);
+    }
+
+    //edit status admin
+
+    public function editStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,approved,rejected'
+        ]);
+
+        $booking = Booking::findOrFail($id);
+
+        $booking->status = $request->status;
+
+        if ($request->status != 'pending') {
+            $booking->approved_by = session('user')->user_id;
+            $booking->approved_at = now();
+        }
+
+        $booking->save();
+
+        return back()->with('success', 'Status booking berhasil diperbarui.');
+    }
+
+    //hapus booking admin
+    public function hapusBooking($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        // Hapus relasi room
+        BookingRoom::where('booking_id', $booking->booking_id)->delete();
+
+        // Hapus file surat jika ada
+        if ($booking->surat) {
+        Storage::disk('public')->delete($booking->surat);
+        }
+
+        $booking->delete();
+
+        return redirect('/admin/all-bookings')
+            ->with('success', 'Booking berhasil dihapus.');
     }
 }
