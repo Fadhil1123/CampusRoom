@@ -101,5 +101,5 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/kegiatan/edit/{id}',    [KegiatanController::class, 'edit']);
     Route::put('/admin/kegiatan/update/{id}',  [KegiatanController::class, 'update']);
     Route::get('/admin/kegiatan/delete/{id}',  [KegiatanController::class, 'destroy']);
-
+    Route::post('/admin/kegiatan/bulk-delete', [KegiatanController::class, 'bulkDestroy']);
 });
