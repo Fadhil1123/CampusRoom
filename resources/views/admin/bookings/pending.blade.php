@@ -52,11 +52,6 @@
             </select>
         </div>
         <div class="cr-apv-filter-row">
-            <div class="cr-apv-search">
-                <span class="cr-apv-search__icon">🔍</span>
-                <input type="text" name="user_search" value="{{ request('user_search') }}"
-                       class="cr-apv-input" placeholder="Ahmad/BK...">
-            </div>
             <div class="cr-apv-date-wrap">
                 <span class="cr-apv-date__icon">📅</span>
                 <input type="date" name="dari" value="{{ request('dari') }}"

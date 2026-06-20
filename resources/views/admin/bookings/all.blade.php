@@ -43,7 +43,7 @@
             <div class="cr-dba-search cr-dba-search--wide">
                 <span class="cr-dba-search__icon">🔍</span>
                 <input type="text" name="search" value="{{ request('search') }}"
-                       class="cr-dba-input" placeholder="Cari kode booking"
+                       class="cr-dba-input" placeholder="Cari nama/kode booking"
                        oninput="debounceSubmit()">
             </div>
 
@@ -64,14 +64,6 @@
         </div>
 
         <div class="cr-dba-filter-row cr-dba-filter-row--2">
-            {{-- Search nama/BK --}}
-            <div class="cr-dba-search">
-                <span class="cr-dba-search__icon">🔍</span>
-                <input type="text" name="user_search" value="{{ request('user_search') }}"
-                       class="cr-dba-input" placeholder="Cari nama/NIM peminjam"
-                       oninput="debounceSubmit()">
-            </div>
-
             {{-- Dari --}}
             <div class="cr-dba-date-wrap">
                 <span class="cr-dba-date__icon">📅</span>
@@ -100,7 +92,7 @@
         </div>
 
         {{-- Reset filter --}}
-        @if(request()->hasAny(['search','status','jenis','dari','hingga','room_id','user_search']))
+        @if(request()->hasAny(['search','status','jenis','dari','hingga','room_id']))
         <div class="cr-dba-filter-reset">
             <a href="/admin/all-bookings" class="cr-dba-reset-btn">✕ Reset Filter</a>
         </div>
