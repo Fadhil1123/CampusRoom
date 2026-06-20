@@ -9,6 +9,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\ProfileController;
 
 // PUBLIC
 Route::get('/', fn() => view('landing'));
@@ -26,6 +27,11 @@ Route::get('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth.custom')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'userDashboard']);
+
+    Route::get('/profile',                  [ProfileController::class, 'index']);
+    Route::post('/profile/update',          [ProfileController::class, 'update']);
+    Route::post('/profile/update-password', [ProfileController::class, 'updatePassword']);
+    Route::post('/profile/delete-photo',    [ProfileController::class, 'deletePhoto']);
 
     // Rooms
     Route::get('/rooms',      [RoomController::class, 'index']);
