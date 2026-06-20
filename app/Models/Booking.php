@@ -22,6 +22,8 @@ class Booking extends Model
         'jenis',
         'status',
         'surat',
+        'approved_by',
+        'approved_at',
     ];
 
     public function user()
