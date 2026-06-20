@@ -84,11 +84,11 @@
                     @endif
                 </span>
             </a>
-            <a href="/admin/kegiatan"
+            <!-- <a href="/admin/kegiatan"
                class="cr-sidebar__nav-item {{ request()->is('admin/kegiatan*') ? 'cr-sidebar__nav-item--active' : '' }}">
                 <span class="cr-nav-icon">🎯</span>
                 <span class="cr-nav-label">Kegiatan</span>
-            </a>
+            </a> -->
             <a href="/admin/notifikasi"
                class="cr-sidebar__nav-item {{ request()->is('admin/notifikasi') ? 'cr-sidebar__nav-item--active' : '' }}">
                 <span class="cr-nav-icon">🔔</span>
