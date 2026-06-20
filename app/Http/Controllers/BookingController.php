@@ -814,18 +814,54 @@ class BookingController extends Controller
     public function hapusBooking($id)
     {
         $booking = Booking::findOrFail($id);
+        $kegiatanId = $booking->kegiatan_id;
 
         // Hapus relasi room
         BookingRoom::where('booking_id', $booking->booking_id)->delete();
 
         // Hapus file surat jika ada
         if ($booking->surat) {
-        Storage::disk('public')->delete($booking->surat);
+            Storage::disk('public')->delete($booking->surat);
         }
 
         $booking->delete();
 
+        if ($kegiatanId) {
+            Kegiatan::where('kegiatan_id', $kegiatanId)->delete();
+        }
+
         return redirect('/admin/all-bookings')
             ->with('success', 'Booking berhasil dihapus.');
+    }
+
+    //bulk delete admin
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'booking_ids' => 'required|array|min:1',
+            'booking_ids.*' => 'exists:bookings,booking_id'
+        ]);
+
+        foreach ($request->booking_ids as $id) {
+            $booking = Booking::find($id);
+            if ($booking) {
+                $kegiatanId = $booking->kegiatan_id;
+
+                BookingRoom::where('booking_id', $booking->booking_id)->delete();
+
+                if ($booking->surat) {
+                    Storage::disk('public')->delete($booking->surat);
+                }
+
+                $booking->delete();
+
+                if ($kegiatanId) {
+                    Kegiatan::where('kegiatan_id', $kegiatanId)->delete();
+                }
+            }
+        }
+
+        return redirect('/admin/all-bookings')
+            ->with('success', count($request->booking_ids) . ' booking berhasil dihapus.');
     }
 }
