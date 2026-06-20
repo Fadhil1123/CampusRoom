@@ -598,6 +598,7 @@
     function cekKetersediaan() {
         const roomIds   = getSelectedRoomIds();
         const tanggal   = inputTanggal.value;
+        const tanggalSelesai = inputTanggalSelesai.value;
         const jamMulai  = inputMulai.value;
         const jamSelesai= inputSelesai.value;
 
@@ -619,7 +620,7 @@
         fetch('/booking/cek-ketersediaan-multi', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-            body: JSON.stringify({ room_ids: roomIds, tanggal, jam_mulai: jamMulai, jam_selesai: jamSelesai }),
+            body: JSON.stringify({ room_ids: roomIds, tanggal, tanggal_selesai: tanggalSelesai, jam_mulai: jamMulai, jam_selesai: jamSelesai }),
         })
         .then(r => r.json())
         .then(data => {

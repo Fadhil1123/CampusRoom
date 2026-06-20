@@ -116,16 +116,24 @@ class BookingController extends Controller
 
     public function cekKetersediaanMulti(Request $request)
     {
-        $roomIds    = $request->room_ids;
-        $tanggal    = $request->tanggal;
-        $jamMulai   = $request->jam_mulai;
-        $jamSelesai = $request->jam_selesai;
+        $roomIds        = $request->room_ids;
+        $tanggal        = $request->tanggal;
+        $tanggalSelesai = $request->tanggal_selesai ?? $tanggal;
+        $jamMulai       = $request->jam_mulai;
+        $jamSelesai     = $request->jam_selesai;
 
         if (!$roomIds || !is_array($roomIds) || count($roomIds) === 0 || !$tanggal || !$jamMulai || !$jamSelesai) {
             return response()->json(['status' => 'incomplete']);
         }
 
-        $hariIndonesia = $this->convertHari($tanggal);
+        $start = \Carbon\Carbon::parse($tanggal);
+        $end = \Carbon\Carbon::parse($tanggalSelesai);
+        $daysInRange = [];
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            $daysInRange[] = $this->convertHari($date->toDateString());
+        }
+        $daysInRange = array_unique($daysInRange);
+
         $hasil         = [];
 
         foreach ($roomIds as $roomId) {
@@ -145,9 +153,9 @@ class BookingController extends Controller
                 continue;
             }
 
-            // Bentrok jadwal kuliah tetap
+            // Bentrok jadwal kuliah tetap (cek semua hari dalam rentang tanggal)
             $bentrokSchedule = Schedule::where('room_id', $roomId)
-                ->where('hari', $hariIndonesia)
+                ->whereIn('hari', $daysInRange)
                 ->where(function ($q) use ($jamMulai, $jamSelesai) {
                     $q->where('jam_mulai', '<', $jamSelesai)
                       ->where('jam_selesai', '>', $jamMulai);
@@ -164,15 +172,18 @@ class BookingController extends Controller
                 continue;
             }
 
-            // Bentrok booking lain (approved / pending)
-            $bentrokBooking = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
+            // Bentrok booking lain (approved / pending) dengan rentang tanggal yang saling beririsan
+            $bentrokBooking = Booking::leftJoin('kegiatan', 'bookings.kegiatan_id', '=', 'kegiatan.kegiatan_id')
+                ->join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
                 ->where('booking_rooms.room_id', $roomId)
                 ->whereIn('bookings.status', ['approved', 'pending'])
-                ->whereDate('bookings.tanggal', $tanggal)
+                ->where('bookings.tanggal', '<=', $tanggalSelesai)
+                ->where(\DB::raw('COALESCE(kegiatan.tanggal_selesai, bookings.tanggal)'), '>=', $tanggal)
                 ->where(function ($q) use ($jamMulai, $jamSelesai) {
                     $q->where('bookings.jam_mulai', '<', $jamSelesai)
                       ->where('bookings.jam_selesai', '>', $jamMulai);
                 })
+                ->select('bookings.*')
                 ->first();
 
             if ($bentrokBooking) {
@@ -461,10 +472,20 @@ class BookingController extends Controller
                 return back()->with('error', "Ruangan {$room->nama_ruangan} sedang tidak tersedia. Booking dibatalkan.");
             }
 
-            $bentrokBooking = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
+            $start = \Carbon\Carbon::parse($draft['tanggal']);
+            $end = \Carbon\Carbon::parse($draft['tanggal_selesai']);
+            $daysInRange = [];
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $daysInRange[] = $this->convertHari($date->toDateString());
+            }
+            $daysInRange = array_unique($daysInRange);
+
+            $bentrokBooking = Booking::leftJoin('kegiatan', 'bookings.kegiatan_id', '=', 'kegiatan.kegiatan_id')
+                ->join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
                 ->where('booking_rooms.room_id', $roomId)
                 ->whereIn('bookings.status', ['approved', 'pending'])
-                ->whereDate('bookings.tanggal', $draft['tanggal'])
+                ->where('bookings.tanggal', '<=', $draft['tanggal_selesai'])
+                ->where(\DB::raw('COALESCE(kegiatan.tanggal_selesai, bookings.tanggal)'), '>=', $draft['tanggal'])
                 ->where(function ($q) use ($draft) {
                     $q->where('bookings.jam_mulai', '<', $draft['jam_selesai'])
                       ->where('bookings.jam_selesai', '>', $draft['jam_mulai']);
@@ -472,13 +493,11 @@ class BookingController extends Controller
                 ->exists();
 
             if ($bentrokBooking) {
-                return back()->with('error', "Ruangan {$room->nama_ruangan} sudah dibooking pada tanggal & jam tersebut. Booking dibatalkan.");
+                return back()->with('error', "Ruangan {$room->nama_ruangan} sudah dibooking pada rentang tanggal & jam tersebut. Booking dibatalkan.");
             }
 
-            $hariIndonesia = $this->convertHari($draft['tanggal']);
-
             $bentrokSchedule = Schedule::where('room_id', $roomId)
-                ->where('hari', $hariIndonesia)
+                ->whereIn('hari', $daysInRange)
                 ->where(function ($q) use ($draft) {
                     $q->where('jam_mulai', '<', $draft['jam_selesai'])
                       ->where('jam_selesai', '>', $draft['jam_mulai']);
@@ -486,7 +505,7 @@ class BookingController extends Controller
                 ->exists();
 
             if ($bentrokSchedule) {
-                return back()->with('error', "Ruangan {$room->nama_ruangan} bentrok dengan jadwal kuliah tetap. Booking dibatalkan.");
+                return back()->with('error', "Ruangan {$room->nama_ruangan} bentrok dengan jadwal kuliah tetap pada rentang tanggal tersebut. Booking dibatalkan.");
             }
         }
 
@@ -625,15 +644,18 @@ class BookingController extends Controller
 
     public function approveBooking($id)
     {
-        $booking = Booking::find($id);
+        $booking = Booking::with('kegiatan')->findOrFail($id);
         $rooms   = $booking->rooms;
+        $tanggalSelesai = $booking->kegiatan ? $booking->kegiatan->tanggal_selesai : $booking->tanggal;
 
         foreach ($rooms as $room) {
-            $bentrok = Booking::join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
+            $bentrok = Booking::leftJoin('kegiatan', 'bookings.kegiatan_id', '=', 'kegiatan.kegiatan_id')
+                ->join('booking_rooms', 'bookings.booking_id', '=', 'booking_rooms.booking_id')
                 ->where('booking_rooms.room_id', $room->room_id)
                 ->where('bookings.status', 'approved')
-                ->whereDate('bookings.tanggal', $booking->tanggal)
                 ->where('bookings.booking_id', '!=', $booking->booking_id)
+                ->where('bookings.tanggal', '<=', $tanggalSelesai)
+                ->where(\DB::raw('COALESCE(kegiatan.tanggal_selesai, bookings.tanggal)'), '>=', $booking->tanggal)
                 ->where(function ($q) use ($booking) {
                     $q->where('bookings.jam_mulai', '<', $booking->jam_selesai)
                       ->where('bookings.jam_selesai', '>', $booking->jam_mulai);
@@ -641,7 +663,7 @@ class BookingController extends Controller
                 ->exists();
 
             if ($bentrok) {
-                return back()->with('error', 'Ruangan ' . $room->nama_ruangan . ' sudah dipakai booking lain yang telah disetujui.');
+                return back()->with('error', 'Ruangan ' . $room->nama_ruangan . ' sudah dipakai booking lain yang telah disetujui pada rentang tanggal tersebut.');
             }
         }
 
