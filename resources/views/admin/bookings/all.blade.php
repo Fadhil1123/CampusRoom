@@ -148,7 +148,6 @@
                                 </div>
                                 <div class="cr-dba-user__info">
                                     <p class="cr-dba-user__name">{{ Str::limit($namaUser, 14) }}</p>
-                                    <p class="cr-dba-user__role">Panitia</p>
                                 </div>
                             </div>
                         </td>
