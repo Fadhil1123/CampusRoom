@@ -42,12 +42,12 @@
         </div>
 
         {{-- Notifikasi --}}
-        <div class="cr-sidebar__notif">
+        <!-- <div class="cr-sidebar__notif">
             <span class="cr-sidebar__notif-icon">🔔</span>
             <span class="cr-sidebar__notif-text">Notifikasi</span>
             <span class="cr-sidebar__notif-badge">3</span>
             <span class="cr-sidebar__notif-dot"></span>
-        </div>
+        </div> -->
 
         <div class="cr-sidebar__divider"></div>
 
