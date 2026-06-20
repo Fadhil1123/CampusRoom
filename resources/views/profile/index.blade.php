@@ -61,8 +61,10 @@
                     <span class="cr-prf-role-badge">Mahasiswa</span>
                 @endif
 
-                @if($user->jurusan)
+                @if($user->role === 'admin' && $user->jurusan)
                 <p class="cr-prf-jurusan">🎓 {{ $user->jurusan }}</p>
+                @elseif($user->role !== 'admin')
+                <p class="cr-prf-jurusan">🎓 Teknologi Informasi</p>
                 @endif
             </div>
 
@@ -129,9 +131,15 @@
                             <label class="cr-prf-label">
                                 {{ $user->role === 'admin' ? 'Jabatan / Unit' : 'Jurusan / Program Studi' }}
                             </label>
-                            <input type="text" name="jurusan" class="cr-prf-input"
-                                   placeholder="{{ $user->role === 'admin' ? 'Contoh: Tata Usaha Fakultas' : 'Contoh: Teknik Informatika' }}"
-                                   value="{{ old('jurusan', $user->jurusan) }}">
+                            @if($user->role === 'admin')
+                                <input type="text" name="jurusan" class="cr-prf-input"
+                                       placeholder="Contoh: Tata Usaha Fakultas"
+                                       value="{{ old('jurusan', $user->jurusan) }}">
+                            @else
+                                <input type="text" class="cr-prf-input cr-prf-input--disabled"
+                                       value="Teknologi Informasi" disabled>
+                                <span class="cr-prf-hint">Jurusan / Program Studi tidak dapat diubah</span>
+                            @endif
                         </div>
                     </div>
 
