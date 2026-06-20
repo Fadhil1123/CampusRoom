@@ -104,7 +104,8 @@
                     <div class="cr-prf-form-grid">
                         <div class="cr-prf-field">
                             <label class="cr-prf-label">Nama Lengkap</label>
-                            <input type="text" name="nama" class="cr-prf-input" value="{{ old('nama', $user->nama) }}" required>
+                            <input type="text" class="cr-prf-input cr-prf-input--disabled" value="{{ $user->nama }}" disabled>
+                            <span class="cr-prf-hint">Nama lengkap tidak dapat diubah</span>
                         </div>
 
                         <div class="cr-prf-field">

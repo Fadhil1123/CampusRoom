@@ -54,7 +54,6 @@ class ProfileController extends Controller
         } else {
             // Request standar dari form edit profil teks
             $request->validate([
-                'nama'    => 'required|string|max:100',
                 'email'   => 'nullable|email|max:100',
                 'no_hp'   => 'nullable|string|max:20',
                 'jurusan' => 'nullable|string|max:100',
@@ -62,7 +61,6 @@ class ProfileController extends Controller
             ]);
 
             $data = [
-                'nama'    => $request->nama,
                 'email'   => $request->email,
                 'no_hp'   => $request->no_hp,
                 'jurusan' => $user->role === 'admin' ? $request->jurusan : 'Teknologi Informasi',
