@@ -100,12 +100,12 @@
                                 <p class="cr-adm-approval-card__name">
                                     {{ $booking->user?->nama ?? 'User' }}
                                 </p>
-                                <!-- <p class="cr-adm-approval-card__meta">
+                                <p class="cr-adm-approval-card__meta">
                                     {{ $booking->jenis === 'perkuliahan'
                                         ? 'Perkuliahan'
                                         : ($booking->kegiatan?->nama_kegiatan ?? 'Kegiatan') }},
                                     {{ $booking->rooms->pluck('nama_ruangan')->join(', ') }}
-                                </p> -->
+                                </p>
                                 <p class="cr-adm-approval-card__rooms">
                                     {{ $booking->rooms->pluck('nama_ruangan')->join(', ') }}
                                     @if($booking->rooms->count() > 1)
