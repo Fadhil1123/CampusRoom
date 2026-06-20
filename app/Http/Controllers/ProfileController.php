@@ -65,7 +65,7 @@ class ProfileController extends Controller
                 'nama'    => $request->nama,
                 'email'   => $request->email,
                 'no_hp'   => $request->no_hp,
-                'jurusan' => $request->jurusan,
+                'jurusan' => $user->role === 'admin' ? $request->jurusan : 'Teknologi Informasi',
             ];
 
             // Upload foto baru jika ada
