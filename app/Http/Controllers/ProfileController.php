@@ -37,31 +37,48 @@ class ProfileController extends Controller
         $userId = session('user')->user_id;
         $user   = User::findOrFail($userId);
 
-        $request->validate([
-            'nama'    => 'required|string|max:100',
-            'email'   => 'nullable|email|max:100',
-            'no_hp'   => 'nullable|string|max:20',
-            'jurusan' => 'nullable|string|max:100',
-            'foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+        // Deteksi jika ini adalah request upload foto saja dari form avatar
+        if ($request->hasFile('foto') && !$request->has('nama')) {
+            $request->validate([
+                'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
 
-        $data = [
-            'nama'    => $request->nama,
-            'email'   => $request->email,
-            'no_hp'   => $request->no_hp,
-            'jurusan' => $request->jurusan,
-        ];
-
-        // Upload foto baru jika ada
-        if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
             if ($user->foto) {
                 \Storage::disk('public')->delete($user->foto);
             }
-            $data['foto'] = $request->file('foto')->store('profile-photos', 'public');
-        }
+            
+            $user->update([
+                'foto' => $request->file('foto')->store('profile-photos', 'public')
+            ]);
+        } else {
+            // Request standar dari form edit profil teks
+            $request->validate([
+                'nama'    => 'required|string|max:100',
+                'email'   => 'nullable|email|max:100',
+                'no_hp'   => 'nullable|string|max:20',
+                'jurusan' => 'nullable|string|max:100',
+                'foto'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
 
-        $user->update($data);
+            $data = [
+                'nama'    => $request->nama,
+                'email'   => $request->email,
+                'no_hp'   => $request->no_hp,
+                'jurusan' => $request->jurusan,
+            ];
+
+            // Upload foto baru jika ada
+            if ($request->hasFile('foto')) {
+                // Hapus foto lama jika ada
+                if ($user->foto) {
+                    \Storage::disk('public')->delete($user->foto);
+                }
+                $data['foto'] = $request->file('foto')->store('profile-photos', 'public');
+            }
+
+            $user->update($data);
+        }
 
         // Update session agar sidebar langsung ikut berubah
         session(['user' => $user->fresh()]);
