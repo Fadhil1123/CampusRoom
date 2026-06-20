@@ -34,7 +34,7 @@
             </div>
             <div class="cr-sidebar__profile-info">
                 <p class="cr-sidebar__name">{{ $user->nama ?? 'User' }}! 👋</p>
-                <p class="cr-sidebar__role">Informatika</p>
+                <p class="cr-sidebar__role">{{ $user->jurusan ?? 'Mahasiswa' }}</p>
                 <p class="cr-sidebar__nim">{{ $user->nim_nip ?? '' }}</p>
             </div>
         </div>
