@@ -165,9 +165,9 @@
                             <div class="cr-dak-td-actions">
                                 <a href="/admin/kegiatan/edit/{{ $k->kegiatan_id }}"
                                    class="cr-dak-icon-btn cr-dak-icon-btn--edit" title="Edit">✏</a>
-                                <a href="/admin/kegiatan/delete/{{ $k->kegiatan_id }}"
-                                   class="cr-dak-icon-btn cr-dak-icon-btn--delete" title="Hapus"
-                                   onclick="return confirm('Hapus kegiatan ini?')">🗑</a>
+                                 <a href="#"
+                                    class="cr-dak-icon-btn cr-dak-icon-btn--delete" title="Hapus"
+                                    onclick="event.preventDefault(); if(confirm('Hapus kegiatan ini?')) { var form = document.getElementById('form-delete-kegiatan'); form.action = '/admin/kegiatan/delete/{{ $k->kegiatan_id }}'; form.submit(); }">🗑</a>
                             </div>
                         </td>
                     </tr>
@@ -385,4 +385,8 @@
     };
 })();
 </script>
+<form id="form-delete-kegiatan" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection

@@ -125,16 +125,18 @@
                         @endif
 
                         <div class="cr-adm-approval-card__actions">
-                            <a href="/admin/bookings/{{ $booking->booking_id }}/approve"
-                               class="cr-adm-btn cr-adm-btn--approve"
-                               onclick="return confirm('Setujui booking ini?')">
-                                ✓ Setujui
-                            </a>
-                            <a href="/admin/bookings/{{ $booking->booking_id }}/reject"
-                               class="cr-adm-btn cr-adm-btn--reject"
-                               onclick="return confirm('Tolak booking ini?')">
-                                ✕ Tolak
-                            </a>
+                            <form action="/admin/bookings/{{ $booking->booking_id }}/approve" method="POST" style="display: inline-block; flex: 1; margin: 0;" onsubmit="return confirm('Setujui booking ini?')">
+                                @csrf
+                                <button type="submit" class="cr-adm-btn cr-adm-btn--approve" style="width: 100%; border: none; cursor: pointer;">
+                                    ✓ Setujui
+                                </button>
+                            </form>
+                            <form action="/admin/bookings/{{ $booking->booking_id }}/reject" method="POST" style="display: inline-block; flex: 1; margin: 0;" onsubmit="return confirm('Tolak booking ini?')">
+                                @csrf
+                                <button type="submit" class="cr-adm-btn cr-adm-btn--reject" style="width: 100%; border: none; cursor: pointer;">
+                                    ✕ Tolak
+                                </button>
+                            </form>
                             <a href="/booking/detail/{{ $booking->booking_id }}"
                                class="cr-adm-btn cr-adm-btn--detail">
                                 👁 Detail

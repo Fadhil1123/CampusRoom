@@ -197,16 +197,18 @@
 
                 {{-- Tombol aksi --}}
                 <div class="cr-apv-card__actions">
-                    <a href="/admin/bookings/{{ $bk->booking_id }}/reject"
-                       class="cr-apv-btn cr-apv-btn--tolak"
-                       onclick="return confirm('Tolak booking ini?')">
-                        ✕ Tolak Booking
-                    </a>
-                    <a href="/admin/bookings/{{ $bk->booking_id }}/approve"
-                       class="cr-apv-btn cr-apv-btn--setujui"
-                       onclick="return confirm('Setujui booking ini?')">
-                        ✓ Setujui Booking
-                    </a>
+                    <form action="/admin/bookings/{{ $bk->booking_id }}/reject" method="POST" style="display: inline-block; flex: 1; margin: 0;" onsubmit="return confirm('Tolak booking ini?')">
+                        @csrf
+                        <button type="submit" class="cr-apv-btn cr-apv-btn--tolak" style="width: 100%; border: none; cursor: pointer;">
+                            ✕ Tolak Booking
+                        </button>
+                    </form>
+                    <form action="/admin/bookings/{{ $bk->booking_id }}/approve" method="POST" style="display: inline-block; flex: 1; margin: 0;" onsubmit="return confirm('Setujui booking ini?')">
+                        @csrf
+                        <button type="submit" class="cr-apv-btn cr-apv-btn--setujui" style="width: 100%; border: none; cursor: pointer;">
+                            ✓ Setujui Booking
+                        </button>
+                    </form>
                 </div>
 
             </div>{{-- end card body --}}
