@@ -101,13 +101,17 @@ class ProfileController extends Controller
             'password_baru.min'       => 'Password baru minimal 6 karakter.',
         ]);
 
-        // Cek password lama — sesuai sistem ini yang menyimpan password plain text
-        // (lihat AuthController::login yang membandingkan langsung tanpa Hash::check)
-        if ($request->password_lama !== $user->password) {
+        // Cek password lama (dukung plain text maupun hash)
+        $isHashed = password_get_info($user->password)['algoName'] !== 'unknown';
+        $passwordMatches = $isHashed 
+            ? \Hash::check($request->password_lama, $user->password) 
+            : ($request->password_lama === $user->password);
+
+        if (!$passwordMatches) {
             return back()->with('error_password', 'Password lama tidak sesuai.');
         }
 
-        $user->update(['password' => $request->password_baru]);
+        $user->update(['password' => \Hash::make($request->password_baru)]);
 
         return back()->with('success_password', 'Password berhasil diperbarui!');
     }

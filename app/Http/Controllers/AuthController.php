@@ -15,22 +15,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $user = User::where('nim_nip', $request->nim_nip)
-            ->where('password', $request->password)
             ->first();
 
         if ($user) {
+            $isHashed = password_get_info($user->password)['algoName'] !== 'unknown';
+            $passwordMatches = $isHashed 
+                ? \Hash::check($request->password, $user->password) 
+                : ($request->password === $user->password);
 
-            session([
-                'user' => $user
-            ]);
+            if ($passwordMatches) {
+                session([
+                    'user' => $user
+                ]);
 
-            if ($user->role == 'admin') {
-
-                return redirect('/admin/dashboard');
-
-            } else {
-
-                return redirect('/dashboard');
+                if ($user->role == 'admin') {
+                    return redirect('/admin/dashboard');
+                } else {
+                    return redirect('/dashboard');
+                }
             }
         }
 

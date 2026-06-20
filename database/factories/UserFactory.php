@@ -28,7 +28,7 @@ class UserFactory extends Factory
             'nim_nip' => fake()->unique()->numerify('##########'),
             'nama' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => 'password123', // matching standard password in custom auth
+            'password' => static::$password ??= \Hash::make('password123'), // matching standard password in custom auth
             'role' => 'user',
         ];
     }
