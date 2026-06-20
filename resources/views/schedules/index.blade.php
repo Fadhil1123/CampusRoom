@@ -236,7 +236,7 @@
                     <label class="cr-sch-modal__label">Ruangan *</label>
                     <div class="cr-sch-modal__select-wrap">
                         <select name="room_id" id="fieldRuangan" class="cr-sch-modal__select" required>
-                            <option value="">Pilih Ruangan ▼</option>
+                            <option value="">Pilih Ruangan</option>
                             @foreach($rooms as $room)
                             <option value="{{ $room->room_id }}">{{ $room->nama_ruangan }}</option>
                             @endforeach
@@ -251,7 +251,7 @@
                         <label class="cr-sch-modal__label">Hari *</label>
                         <div class="cr-sch-modal__select-wrap">
                             <select name="hari" id="fieldHari" class="cr-sch-modal__select" required>
-                                <option value="">Pilih Hari ▼</option>
+                                <option value="">Pilih Hari</option>
                                 @foreach(['Senin','Selasa','Rabu','Kamis','Jumat'] as $h)
                                 <option value="{{ $h }}">{{ $h }}</option>
                                 @endforeach
@@ -372,7 +372,7 @@
 .cr-sch-select {
     padding: 10px 36px 10px 14px; border: 1.5px solid #E8EEF7; border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-size: 0.838rem; color: #1A2340; background: #fff;
-    outline: none; appearance: none; cursor: pointer; transition: border-color .2s;
+    outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; transition: border-color .2s;
 }
 .cr-sch-select:focus { border-color: #F4B400; }
 .cr-sch-select-caret {
@@ -542,7 +542,7 @@
 .cr-sch-modal__select {
     width: 100%; padding: 10px 30px 10px 12px; border: 1.5px solid #E8EEF7; border-radius: 9px;
     font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: #1A2340; background: #FAFBFF;
-    outline: none; appearance: none; cursor: pointer; transition: border-color .2s;
+    outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; transition: border-color .2s;
 }
 .cr-sch-modal__select:focus { border-color: #F4B400; }
 .cr-sch-modal__caret {
