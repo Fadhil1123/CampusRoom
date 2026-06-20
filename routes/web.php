@@ -101,6 +101,7 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/booking/detail/{id}',   [BookingController::class, 'adminDetailBooking']);
     Route::post('/admin/bookings/{id}/edit-status', [BookingController::class, 'editStatus']);
     Route::delete('/admin/booking/{id}/hapus', [BookingController::class, 'hapusBooking']);
+    Route::post('/admin/bookings/bulk-delete', [BookingController::class, 'bulkDelete']);
     Route::get('/admin/all-bookings',          [BookingController::class, 'allBookings']);
 
     Route::get('/admin/kegiatan',              [KegiatanController::class, 'index']);

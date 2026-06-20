@@ -116,7 +116,6 @@
                         <th>Tanggal &amp; Waktu</th>
                         <th>Status</th>
                         <th>Aksi</th>
-                        <th><span class="cr-dba-th-gear">⚙</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -200,18 +199,10 @@
                                 👁 {{ $isFirst ? 'Lihat Detail' : 'Lihat' }}
                             </a>
                         </td>
-
-                        {{-- Checkbox kanan --}}
-                        <td class="cr-dba-td-check-r">
-                            <input type="checkbox" name="booking_ids_r[]"
-                                   value="{{ $bk->booking_id }}"
-                                   class="cr-dba-checkbox row-check-r"
-                                   onchange="syncCheck(this)">
-                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="cr-dba-empty">
+                        <td colspan="8" class="cr-dba-empty">
                             <span>📋</span>
                             <p>Belum ada data booking.</p>
                         </td>
@@ -455,11 +446,6 @@
         document.querySelectorAll('.row-check').forEach(cb => {
             cb.checked = master.checked;
         });
-        updateBulkBar();
-    };
-
-    // Sync kanan-kiri checkbox
-    window.syncCheck = function(cb) {
         updateBulkBar();
     };
 
