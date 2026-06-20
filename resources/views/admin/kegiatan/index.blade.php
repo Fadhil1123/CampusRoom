@@ -91,9 +91,6 @@
                 <span class="cr-dak-range-label">Pilih Rentang Tanggal</span>
                 <span class="cr-dak-range-caret">▼</span>
             </div>
-            <button type="button" class="cr-dak-export-btn" onclick="exportExcel()">
-                Export Excel 📊
-            </button>
         </div>
 
         @if(request()->hasAny(['search','status','room_id','dari','hingga','penyelenggara','kode_search']))
@@ -191,7 +188,6 @@
     <div class="cr-dak-footer">
         <div class="cr-dak-bulk" id="bulkBar" style="display:none">
             <span class="cr-dak-bulk__count" id="bulkCount">*0 dipilih —</span>
-            <button type="button" class="cr-dak-bulk-btn cr-dak-bulk-btn--export" onclick="bulkExport()">[Export]</button>
             <button type="button" class="cr-dak-bulk-btn cr-dak-bulk-btn--hapus" onclick="bulkDelete()">[Hapus]</button>
         </div>
 
@@ -381,21 +377,11 @@
         }
     };
 
-    window.bulkExport = function() {
-        const ids = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.value);
-        if (ids.length === 0) return;
-        alert('Export ' + ids.length + ' kegiatan: ' + ids.join(', '));
-    };
-
     window.bulkDelete = function() {
         const ids = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.value);
         if (ids.length === 0) return;
         if (!confirm('Hapus ' + ids.length + ' kegiatan yang dipilih?')) return;
         document.getElementById('bulkForm').submit();
-    };
-
-    window.exportExcel = function() {
-        window.location.href = '/admin/kegiatan/export' + window.location.search;
     };
 })();
 </script>

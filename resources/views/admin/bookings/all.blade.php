@@ -29,9 +29,6 @@
             </h1>
             <p class="cr-dba-subtitle">
                 Total: <strong>{{ $totalBooking }} booking</strong>
-                <a href="#" class="cr-dba-export-link" onclick="exportExcel(event)">
-                    [Export Excel 📊]
-                </a>
             </p>
         </div>
     </div>
@@ -202,10 +199,6 @@
                                class="cr-dba-aksi-btn cr-dba-aksi-btn--lihat">
                                 👁 {{ $isFirst ? 'Lihat Detail' : 'Lihat' }}
                             </a>
-                            <a href="/admin/booking/export/{{ $bk->booking_id }}"
-                               class="cr-dba-aksi-btn cr-dba-aksi-btn--export">
-                                ⬇ Export
-                            </a>
                         </td>
 
                         {{-- Checkbox kanan --}}
@@ -234,8 +227,6 @@
         {{-- Bulk bar --}}
         <div class="cr-dba-bulk" id="bulkBar" style="display:none">
             <span class="cr-dba-bulk__count" id="bulkCount">*0 dipilih —</span>
-            <button type="button" class="cr-dba-bulk-btn cr-dba-bulk-btn--export"
-                    onclick="bulkExport()">[Export]</button>
             <button type="button" class="cr-dba-bulk-btn cr-dba-bulk-btn--hapus"
                     onclick="bulkDelete()">[Hapus]</button>
         </div>
@@ -485,25 +476,12 @@
         }
     };
 
-    // Bulk export
-    window.bulkExport = function() {
-        const ids = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.value);
-        if (ids.length === 0) return;
-        alert('Export ' + ids.length + ' booking: ' + ids.join(', '));
-    };
-
     // Bulk delete
     window.bulkDelete = function() {
         const ids = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.value);
         if (ids.length === 0) return;
         if (!confirm('Hapus ' + ids.length + ' booking yang dipilih? Tindakan ini tidak dapat dibatalkan.')) return;
         document.getElementById('bulkForm').submit();
-    };
-
-    // Export excel semua
-    window.exportExcel = function(e) {
-        e.preventDefault();
-        window.location.href = '/admin/all-bookings/export';
     };
 })();
 </script>
