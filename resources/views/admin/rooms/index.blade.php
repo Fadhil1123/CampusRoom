@@ -259,6 +259,11 @@
     </div>
 </div>
 
+<form id="form-delete-room" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 <style>
 /* ============================================================
    CRUD ROOMS PAGE
@@ -659,7 +664,9 @@
     window.confirmDelete = function(e) {
         e.preventDefault();
         if (!deleteId) return;
-        window.location.href = '/rooms/delete/' + deleteId;
+        var form = document.getElementById('form-delete-room');
+        form.action = '/rooms/delete/' + deleteId;
+        form.submit();
     };
 
     // ─── Close modal on ESC ──────────────────────────────────────

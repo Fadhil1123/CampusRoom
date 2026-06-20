@@ -82,7 +82,7 @@ Route::middleware('admin')->group(function () {
     Route::post('/rooms/store',       [RoomController::class, 'store']);
     Route::get('/rooms/edit/{id}',    [RoomController::class, 'edit']);
     Route::put('/rooms/update/{id}',  [RoomController::class, 'update']);
-    Route::get('/rooms/delete/{id}',  [RoomController::class, 'destroy']);
+    Route::delete('/rooms/delete/{id}',  [RoomController::class, 'destroy']);
 
     // ===== SCHEDULES (admin only) =====
     Route::get('/schedules',               [ScheduleController::class, 'index']);
@@ -96,8 +96,8 @@ Route::middleware('admin')->group(function () {
     Route::post('/schedules/cek-bentrok',  [ScheduleController::class, 'cekBentrok']);
 
     Route::get('/admin/bookings',              [BookingController::class, 'pendingBookings']);
-    Route::get('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
-    Route::get('/admin/bookings/{id}/reject',  [BookingController::class, 'rejectBooking']);
+    Route::post('/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
+    Route::post('/admin/bookings/{id}/reject',  [BookingController::class, 'rejectBooking']);
     Route::get('/admin/booking/detail/{id}',   [BookingController::class, 'adminDetailBooking']);
     Route::post('/admin/bookings/{id}/edit-status', [BookingController::class, 'editStatus']);
     Route::delete('/admin/booking/{id}/hapus', [BookingController::class, 'hapusBooking']);
@@ -107,6 +107,6 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/kegiatan',              [KegiatanController::class, 'index']);
     Route::get('/admin/kegiatan/edit/{id}',    [KegiatanController::class, 'edit']);
     Route::put('/admin/kegiatan/update/{id}',  [KegiatanController::class, 'update']);
-    Route::get('/admin/kegiatan/delete/{id}',  [KegiatanController::class, 'destroy']);
+    Route::delete('/admin/kegiatan/delete/{id}',  [KegiatanController::class, 'destroy']);
     Route::post('/admin/kegiatan/bulk-delete', [KegiatanController::class, 'bulkDestroy']);
 });
