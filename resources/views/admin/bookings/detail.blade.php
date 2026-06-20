@@ -361,6 +361,11 @@
     </div>
 </div>
 
+<form id="form-delete-booking" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 <style>
 /* ============================================================
    ADMIN BOOKING DETAIL
@@ -529,7 +534,9 @@ window.closeEditStatus = function() { document.getElementById('modalEditStatus')
 window.kirimNotifikasi = function(id) { alert('Notifikasi dikirim ke peminjam untuk booking #'+id); };
 window.hapusBooking    = function(id) {
     if (confirm('Hapus booking ini? Tindakan tidak dapat dibatalkan.')) {
-        window.location.href = '/admin/booking/' + id + '/hapus';
+        var form = document.getElementById('form-delete-booking');
+        form.action = '/admin/booking/' + id + '/hapus';
+        form.submit();
     }
 };
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeEditStatus(); });
