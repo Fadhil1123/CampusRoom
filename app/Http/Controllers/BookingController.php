@@ -578,9 +578,14 @@ class BookingController extends Controller
 
     public function pendingBookings(Request $request)
 {
-    $query = Booking::where('status', 'pending')
-        ->with(['rooms', 'user', 'kegiatan'])
+    $query = Booking::with(['rooms', 'user', 'kegiatan'])
         ->orderBy('booking_id', 'asc');
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    } else {
+        $query->where('status', 'pending');
+    }
 
     if ($request->filled('search')) {
         $s = $request->search;

@@ -41,15 +41,14 @@
             </div>
             <select name="status" class="cr-apv-select" onchange="this.form.submit()">
                 <option value="">Status ▼</option>
-                <option value="pending"  selected>Pending</option>
+                <option value="approved" {{ request('status')==='approved' ? 'selected' : '' }}>Approved</option>
+                <option value="pending"  {{ request('status')==='pending' || !request()->has('status') ? 'selected' : '' }}>Pending</option>
+                <option value="rejected" {{ request('status')==='rejected' ? 'selected' : '' }}>Rejected</option>
             </select>
             <select name="jenis" class="cr-apv-select" onchange="this.form.submit()">
                 <option value="">Jenis ▼</option>
                 <option value="perkuliahan" {{ request('jenis')==='perkuliahan' ? 'selected' : '' }}>Perkuliahan</option>
                 <option value="kegiatan"    {{ request('jenis')==='kegiatan'    ? 'selected' : '' }}>Kegiatan</option>
-            </select>
-            <select name="status2" class="cr-apv-select" onchange="this.form.submit()">
-                <option value="">Status ▼</option>
             </select>
         </div>
         <div class="cr-apv-filter-row">
