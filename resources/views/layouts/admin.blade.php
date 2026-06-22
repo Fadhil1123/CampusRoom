@@ -89,11 +89,6 @@
                 <span class="cr-nav-icon">🎯</span>
                 <span class="cr-nav-label">Kegiatan</span>
             </a> -->
-            <a href="/admin/notifikasi"
-               class="cr-sidebar__nav-item {{ request()->is('admin/notifikasi') ? 'cr-sidebar__nav-item--active' : '' }}">
-                <span class="cr-nav-icon">🔔</span>
-                <span class="cr-nav-label">Notifikasi</span>
-            </a>
         </nav>
 
         <div class="cr-sidebar__spacer"></div>
