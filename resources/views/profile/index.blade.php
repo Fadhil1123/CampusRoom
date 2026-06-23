@@ -8,7 +8,7 @@
     {{-- Brand pill --}}
     <div class="cr-dash-brand-pill">
         <span class="cr-dash-brand-pill__icon">🟨</span>
-        <span class="cr-dash-brand-pill__text">CampusRoom • v1.0 Admin</span>
+        <span class="cr-dash-brand-pill__text">CampusRoom • v1.0 {{ session('user') && session('user')->role === 'admin' ? 'Admin' : 'Mahasiswa' }}</span>
     </div>
 
     {{-- Header --}}

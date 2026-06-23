@@ -73,11 +73,7 @@
 
         <div class="lg-form-wrap">
 
-            {{-- Pill brand --}}
-            <div class="lg-brand-pill">
-                <span class="lg-brand-pill__icon">🟨</span>
-                <span class="lg-brand-pill__text">CampusRoom • v1.0 Admin</span>
-            </div>
+
 
             {{-- Heading --}}
             <div class="lg-form-heading">
