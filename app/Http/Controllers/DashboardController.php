@@ -6,7 +6,6 @@ use App\Models\Room;
 use App\Models\Booking;
 use App\Models\User;
 use App\Models\Kegiatan;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -59,7 +58,7 @@ class DashboardController extends Controller
         $jadwalSaya = Booking::where('user_id', $userId)
             ->whereIn('status', ['approved', 'pending'])
             ->whereDate('tanggal', '>=', now()->toDateString())
-            ->with('rooms', 'kegiatan')
+            ->with(['rooms', 'kegiatan'])
             ->orderBy('tanggal', 'asc')
             ->orderBy('jam_mulai', 'asc')
             ->get();

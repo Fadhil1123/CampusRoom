@@ -9,7 +9,7 @@
     {{-- ===================== BRAND PILL (top right) ===================== --}}
     <div class="cr-dash-brand-pill">
         <span class="cr-dash-brand-pill__icon">🟨</span>
-        <span class="cr-dash-brand-pill__text">CampusRoom • v1.0 Admin</span>
+        <span class="cr-dash-brand-pill__text">CampusRoom • v1.0 Mahasiswa</span>
     </div>
 
     {{-- ===================== RINGKASAN STATUS ===================== --}}
